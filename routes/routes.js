@@ -1,20 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const category_controller = require("../controllers/categoryController");
+const product_controller = require("../controllers/productController");
+const product_instance_controller = require("../controllers/productInstanceController");
 
-router.get("/products", (req, res, next) => {
-  // get all products
-});
+router.get("/categories", category_controller.category_list);
 
-router.post("/products", (req, res, next) => {
-  // create a new product
-});
+router.get("/products", product_controller.product_list);
 
-router.update("/products/:id", (req, res, next) => {
-  // update a product
-});
-
-router.delete("/products/:id", (req, res, next) => {
-  // delete a product
-});
+router.get(
+  "/productinstances",
+  product_instance_controller.productinstance_list
+);
 
 module.exports = router;

@@ -1,85 +1,38 @@
-const createError = require("http-errors");
 const express = require("express");
-const path = require("path");
-const cookieParser = require("cookie-parser");
-require("dotenv").config();
-const mongoose = require("mongoose");
-const debug = require("debug")("api:server");
-const http = require("http");
 const bodyParser = require("body-parser");
-
-mongoose.set("strictQuery", false);
-const mongoDB = process.env.DB;
-
-main().catch((err) => console.log(err));
-async function main() {
-  await mongoose
-    .connect(mongoDB)
-    .then(() => console.log("Connected to MongoDB"))
-    .catch((err) => console.log(err));
-}
+const mongoose = require("mongoose");
+const routes = require("./routes/routes.js");
+require("dotenv").config();
 
 const app = express();
 
-const port = normalizePort(process.env.PORT);
-app.set("port", port);
+const port = process.env.PORT;
 
-app.use(function (err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-  res.status(err.status || 500);
-  res.render("error");
-});
+mongoose
+  .connect(process.env.DB, { useNewUrlParser: true })
+  .then(() => console.log(`Database connected successfully`))
+  .catch((err) => console.log(err));
+
+mongoose.Promise = global.Promise;
 
 app.use((req, res, next) => {
-  res.end("Welcome to my API");
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
 });
 
-const server = http.createServer(app);
-server.listen(port);
-server.on("error", onError);
-server.on("listening", onListening);
+app.use(bodyParser.json());
 
-function normalizePort(val) {
-  const port = parseInt(val, 10);
+app.use("/api", routes);
 
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
+app.use((err, req, res, next) => {
+  console.log(err);
+  next();
+});
 
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
-
-function onError(error) {
-  if (error.syscall !== "listen") {
-    throw error;
-  }
-
-  const bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
-
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case "EACCES":
-      console.error(bind + " requires elevated privileges");
-      process.exit(1);
-      break;
-    case "EADDRINUSE":
-      console.error(bind + " is already in use");
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
-}
-
-function onListening() {
-  const addr = server.address();
-  const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  debug("Listening on " + bind);
-}
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
