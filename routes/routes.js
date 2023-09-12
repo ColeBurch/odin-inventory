@@ -6,11 +6,20 @@ const product_instance_controller = require("../controllers/productInstanceContr
 
 router.get("/categories", category_controller.category_list);
 
+router.get("/categories/:id", category_controller.category_detail);
+
 router.get("/products", product_controller.product_list);
+
+router.get("/products/:id", product_controller.product_detail);
 
 router.get(
   "/productinstances",
   product_instance_controller.productinstance_list
+);
+
+router.get(
+  "/productinstances/:id",
+  product_instance_controller.product_instance_detail
 );
 
 module.exports = router;
