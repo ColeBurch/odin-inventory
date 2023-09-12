@@ -22,4 +22,9 @@ router.get(
   product_instance_controller.product_instance_detail
 );
 
+router.get(
+  "/productinstances/product/:id",
+  product_instance_controller.product_specific_instances
+);
+
 module.exports = router;
