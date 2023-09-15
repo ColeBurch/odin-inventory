@@ -50,6 +50,7 @@ const products = [
     icon: WatchSVG,
   },
 ];
+
 const callsToAction = [
   { name: "See it in action", href: "#", icon: PlayCircleIcon },
   { name: "Contact support", href: "#", icon: PhoneIcon },
@@ -70,7 +71,7 @@ const Header = () => {
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
-          <a href="#/" className="-m-1.5 p-1.5" data-testid="logo-button">
+          <a href="/" className="-m-1.5 p-1.5" data-testid="logo-button">
             <span className="sr-only">Your Company</span>
             <img className="h-8 w-auto" src={CoffeeSVG} alt="" />
           </a>
@@ -150,7 +151,7 @@ const Header = () => {
             href="/inventory"
             className="text-md font-semibold leading-6 text-gray-900"
           >
-            Marketplace
+            Inventory
           </a>
           <a href="/" className="text-md font-semibold leading-6 text-gray-900">
             Company

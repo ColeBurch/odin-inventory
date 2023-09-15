@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 
 type InventoryType = {
-  id: number;
+  _id: string;
   name: string;
   price: number;
   category: string;
@@ -28,7 +28,7 @@ const StorePage = () => {
 
   React.useEffect(() => {
     getInventory();
-  });
+  }, []);
 
   return (
     <div className="bg-white">
@@ -39,7 +39,7 @@ const StorePage = () => {
 
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {inventory.map((product) => (
-            <div key={product.id} className="relative">
+            <div key={product._id} className="relative">
               <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
                 <img
                   alt={"Placeholder"}
@@ -49,7 +49,7 @@ const StorePage = () => {
               <div className="mt-4 flex justify-between">
                 <div>
                   <h3 className="text-sm text-gray-700">
-                    <a href="/">
+                    <a href={"/products/" + product._id}>
                       <span aria-hidden="true" className="absolute inset-10" />
                       {product.name}
                     </a>
