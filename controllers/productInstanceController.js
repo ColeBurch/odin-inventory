@@ -9,7 +9,9 @@ exports.productinstance_list = asyncHandler(async (req, res, next) => {
 });
 
 exports.product_instance_detail = asyncHandler(async (req, res, next) => {
-  const productinstance = await ProductInstance.findById(req.params.id).exec();
+  const productinstance = await ProductInstance.find({
+    product: req.params.id,
+  }).exec();
   res.json(productinstance);
 });
 

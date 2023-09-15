@@ -30,38 +30,38 @@ const ProductDetailPage = () => {
   const [productInstances, setProductInstances] =
     React.useState<ProductInstanceType>([]);
 
-  const getProductDetails = () => {
-    axios
-      .get("http://localhost:3000/api/products/" + id)
-      .then((res) => {
-        if (res.data) {
-          setProductDetails(res.data);
-          console.log(res.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const getProductInstances = () => {
-    axios
-      .get("http://localhost:3000/api/productinstances/" + id)
-      .then((res) => {
-        if (res.data) {
-          setProductInstances(res.data);
-          console.log(res.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   React.useEffect(() => {
+    const getProductDetails = () => {
+      axios
+        .get("http://localhost:3000/api/products/" + id)
+        .then((res) => {
+          if (res.data) {
+            setProductDetails(res.data);
+            console.log(res.data);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    const getProductInstances = () => {
+      axios
+        .get("http://localhost:3000/api/productinstances/" + id)
+        .then((res) => {
+          if (res.data) {
+            setProductInstances(res.data);
+            console.log(res.data);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
     getProductDetails();
     getProductInstances();
-  }, []);
+  }, [id]);
 
   return (
     <div>
