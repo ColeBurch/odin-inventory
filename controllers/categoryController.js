@@ -20,8 +20,6 @@ exports.category_post = [
     .isLength({ min: 3 }),
 
   asyncHandler(async (req, res, next) => {
-    console.log(req.body);
-
     const errors = validationResult(req);
 
     const category = new Category({
