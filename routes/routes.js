@@ -8,6 +8,8 @@ router.get("/categories", category_controller.category_list);
 
 router.get("/categories/:id", category_controller.category_detail);
 
+router.post("/categories", category_controller.category_post);
+
 router.get("/products", product_controller.product_list);
 
 router.get("/products/:id", product_controller.product_detail);
