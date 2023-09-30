@@ -12,44 +12,7 @@ import {
   PlayCircleIcon,
 } from "@heroicons/react/20/solid";
 import CoffeeSVG from "../images/coffee.svg";
-import ShirtSVG from "../images/shirt.svg";
-import PantSVG from "../images/pants.svg";
-import ShoeSVG from "../images/shoe.svg";
-import HatSVG from "../images/hat.svg";
-import WatchSVG from "../images/watch.svg";
-
-const products = [
-  {
-    name: "Shirts",
-    description: "The basis of every great outfit",
-    href: "#",
-    icon: ShirtSVG,
-  },
-  {
-    name: "Pants",
-    description: "Can't leave home without them",
-    href: "#",
-    icon: PantSVG,
-  },
-  {
-    name: "Shoes",
-    description: "Your feet will thank you",
-    href: "#",
-    icon: ShoeSVG,
-  },
-  {
-    name: "Hats",
-    description: "For the sun and the cold",
-    href: "#",
-    icon: HatSVG,
-  },
-  {
-    name: "Accessories",
-    description: "The finishing touches",
-    href: "#",
-    icon: WatchSVG,
-  },
-];
+import axios from "axios";
 
 const callsToAction = [
   { name: "See it in action", href: "#", icon: PlayCircleIcon },
@@ -60,9 +23,34 @@ function classNames(...classes: Array<string | boolean | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
 
+type CategoryType = {
+  _id: string;
+  name: string;
+  description: string;
+  __v: number;
+}[];
+
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartPreviewOpen, setCartPreviewOpen] = React.useState(false);
+  const [categories, setCategories] = React.useState<CategoryType>([]);
+
+  const getCategories = () => {
+    axios
+      .get("http://localhost:3000/api/categories")
+      .then((res) => {
+        if (res.data) {
+          setCategories(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  React.useEffect(() => {
+    getCategories();
+  }, []);
 
   return (
     <header className="bg-white">
@@ -89,7 +77,7 @@ const Header = () => {
         <Popover.Group className="hidden lg:flex lg:gap-x-12">
           <Popover className="relative">
             <Popover.Button className="flex items-center gap-x-1 text-md font-semibold leading-6 text-gray-900">
-              Product
+              Categories
               <ChevronDownIcon
                 className="h-5 w-5 flex-none text-gray-400"
                 aria-hidden="true"
@@ -107,17 +95,17 @@ const Header = () => {
             >
               <Popover.Panel className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                 <div className="p-4">
-                  {products.map((item) => (
+                  {categories.map((item) => (
                     <div
-                      key={item.name}
+                      key={item._id}
                       className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
                     >
                       <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                        <img className="h-8 w-auto" src={item.icon} alt="" />
+                        <img className="h-8 w-auto" alt="img" />
                       </div>
                       <div className="flex-auto">
                         <a
-                          href={item.href}
+                          href={"/"}
                           className="block font-semibold text-gray-900"
                         >
                           {item.name}
@@ -196,7 +184,7 @@ const Header = () => {
                   {({ open }) => (
                     <>
                       <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                        Product
+                        Categories
                         <ChevronDownIcon
                           className={classNames(
                             open ? "rotate-180" : "",
@@ -206,11 +194,11 @@ const Header = () => {
                         />
                       </Disclosure.Button>
                       <Disclosure.Panel className="mt-2 space-y-2">
-                        {[...products].map((item) => (
+                        {[...categories].map((item) => (
                           <Disclosure.Button
-                            key={item.name}
+                            key={item._id}
                             as="a"
-                            href={item.href}
+                            href={"/"}
                             className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                           >
                             {item.name}
