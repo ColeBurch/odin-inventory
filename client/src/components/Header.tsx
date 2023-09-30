@@ -4,20 +4,11 @@ import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
   XMarkIcon,
-  ShoppingCartIcon,
+  MinusCircleIcon,
 } from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  PhoneIcon,
-  PlayCircleIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronDownIcon, PlusCircleIcon } from "@heroicons/react/20/solid";
 import CoffeeSVG from "../images/coffee.svg";
 import axios from "axios";
-
-const callsToAction = [
-  { name: "See it in action", href: "#", icon: PlayCircleIcon },
-  { name: "Contact support", href: "#", icon: PhoneIcon },
-];
 
 function classNames(...classes: Array<string | boolean | undefined>) {
   return classes.filter(Boolean).join(" ");
@@ -32,7 +23,6 @@ type CategoryType = {
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [cartPreviewOpen, setCartPreviewOpen] = React.useState(false);
   const [categories, setCategories] = React.useState<CategoryType>([]);
 
   const getCategories = () => {
@@ -117,19 +107,26 @@ const Header = () => {
                   ))}
                 </div>
                 <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                  {callsToAction.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
-                    >
-                      <item.icon
-                        className="h-5 w-5 flex-none text-gray-400"
-                        aria-hidden="true"
-                      />
-                      {item.name}
-                    </a>
-                  ))}
+                  <button
+                    key="add"
+                    className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
+                  >
+                    <PlusCircleIcon
+                      className="h-5 w-5 flex-none text-gray-400"
+                      aria-hidden="true"
+                    />
+                    Add Category
+                  </button>
+                  <button
+                    key="Remove"
+                    className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
+                  >
+                    <MinusCircleIcon
+                      className="h-5 w-5 flex-none text-gray-400"
+                      aria-hidden="true"
+                    />
+                    Remove Category
+                  </button>
                 </div>
               </Popover.Panel>
             </Transition>
@@ -145,15 +142,7 @@ const Header = () => {
             Company
           </a>
         </Popover.Group>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <button
-            className="text-sm font-semibold leading-6 text-gray-900 flex"
-            data-testid="cart-button"
-            onClick={() => setCartPreviewOpen(true)}
-          >
-            <ShoppingCartIcon className="h-7 w-auto flex-none" />
-          </button>
-        </div>
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end"></div>
       </nav>
       <Dialog
         as="div"
@@ -204,6 +193,26 @@ const Header = () => {
                             {item.name}
                           </Disclosure.Button>
                         ))}
+                        <button
+                          key="add"
+                          className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
+                        >
+                          <PlusCircleIcon
+                            className="h-5 w-5 flex-none text-gray-400"
+                            aria-hidden="true"
+                          />
+                          Add Category
+                        </button>
+                        <button
+                          key="Remove"
+                          className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
+                        >
+                          <MinusCircleIcon
+                            className="h-5 w-5 flex-none text-gray-400"
+                            aria-hidden="true"
+                          />
+                          Remove Category
+                        </button>
                       </Disclosure.Panel>
                     </>
                   )}
@@ -221,34 +230,11 @@ const Header = () => {
                   Company
                 </a>
               </div>
-              <div className="py-6">
-                <button className="-mx-3 rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 flex">
-                  <ShoppingCartIcon
-                    className="h-7 w-auto flex-none"
-                    aria-hidden="true"
-                    onClick={() => setCartPreviewOpen(true)}
-                  />
-                </button>
-              </div>
+              <div className="py-6"></div>
             </div>
           </div>
         </Dialog.Panel>
       </Dialog>
-      <Transition.Root show={cartPreviewOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={setCartPreviewOpen}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-in-out duration-500"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in-out duration-500"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          </Transition.Child>
-        </Dialog>
-      </Transition.Root>
     </header>
   );
 };
