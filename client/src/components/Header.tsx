@@ -107,8 +107,8 @@ const Header = () => {
                   ))}
                 </div>
                 <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                  <button
-                    key="add"
+                  <a
+                    href="/category/form/add"
                     className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
                   >
                     <PlusCircleIcon
@@ -116,7 +116,7 @@ const Header = () => {
                       aria-hidden="true"
                     />
                     Add Category
-                  </button>
+                  </a>
                   <button
                     key="Remove"
                     className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
@@ -193,8 +193,8 @@ const Header = () => {
                             {item.name}
                           </Disclosure.Button>
                         ))}
-                        <button
-                          key="add"
+                        <a
+                          href="/category/form/add"
                           className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
                         >
                           <PlusCircleIcon
@@ -202,7 +202,7 @@ const Header = () => {
                             aria-hidden="true"
                           />
                           Add Category
-                        </button>
+                        </a>
                         <button
                           key="Remove"
                           className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
