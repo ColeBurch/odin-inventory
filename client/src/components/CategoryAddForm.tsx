@@ -1,11 +1,16 @@
 import React from "react";
+import axios from "axios";
 
 const CategoryAddForm = () => {
   const [name, setName] = React.useState("");
   const [description, setDescription] = React.useState("");
 
   const handleSubmit = (event: any) => {
-    console.log({ name, description });
+    const data = { name, description };
+    axios.post("http://localhost:3000/api/categories", data).then((res) => {
+      console.log(res);
+      console.log(res.data);
+    });
     event.preventDefault();
   };
 
