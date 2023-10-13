@@ -14,8 +14,10 @@ exports.category_detail = asyncHandler(async (req, res, next) => {
 });
 
 exports.category_post = [
-  body("name", "Name must not be empty.").trim().isLength({ min: 3 }),
-  body("description", "Description must not be empty.")
+  body("name", "Name must be longer than 3 characters.")
+    .trim()
+    .isLength({ min: 3 }),
+  body("description", "Description must be longer than 3 characters.")
     .trim()
     .isLength({ min: 3 }),
 
@@ -28,13 +30,25 @@ exports.category_post = [
     });
 
     if (!errors.isEmpty()) {
-      res.json(category);
+      res.status(401).json({ errors: errors.array() });
     } else {
       const categoryExists = await Category.findOne({
         name: req.body.name,
       }).exec();
       if (categoryExists) {
-        res.json(categoryExists);
+        res
+          .status(401)
+          .json({
+            errors: [
+              {
+                location: "body",
+                msg: "Category already exists.",
+                path: "name",
+                type: "field",
+                value: req.body.name,
+              },
+            ],
+          });
       } else {
         const newCategory = await category.save();
         res.json(newCategory);

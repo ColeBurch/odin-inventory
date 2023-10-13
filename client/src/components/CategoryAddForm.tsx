@@ -7,10 +7,15 @@ const CategoryAddForm = () => {
 
   const handleSubmit = (event: any) => {
     const data = { name, description };
-    axios.post("http://localhost:3000/api/categories", data).then((res) => {
-      console.log(res);
-      console.log(res.data);
-    });
+    axios
+      .post("http://localhost:3000/api/categories", data)
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
     event.preventDefault();
   };
 
