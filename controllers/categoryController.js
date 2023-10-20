@@ -36,19 +36,17 @@ exports.category_post = [
         name: req.body.name,
       }).exec();
       if (categoryExists) {
-        res
-          .status(401)
-          .json({
-            errors: [
-              {
-                location: "body",
-                msg: "Category already exists.",
-                path: "name",
-                type: "field",
-                value: req.body.name,
-              },
-            ],
-          });
+        res.status(401).json({
+          errors: [
+            {
+              location: "body",
+              msg: "Category already exists.",
+              path: "name",
+              type: "field",
+              value: req.body.name,
+            },
+          ],
+        });
       } else {
         const newCategory = await category.save();
         res.json(newCategory);
@@ -56,3 +54,28 @@ exports.category_post = [
     }
   }),
 ];
+
+exports.category_delete = asyncHandler(async (req, res, next) => {
+  const [category, allProductsInCategory] = await Promise.all([
+    Category.findById(req.body._id).exec(),
+    Product.find({ category: req.body._id }).exec(),
+  ]);
+
+  if (allProductsInCategory.length > 0) {
+    res.status(401).json({
+      errors: [
+        {
+          location: "body",
+          msg: "Cannot delete category with products.",
+          path: "name",
+          type: "field",
+          value: req.body.name,
+        },
+      ],
+    });
+    return;
+  } else {
+    await Category.findByIdAndDelete(req.body._id).exec();
+    res.json({ message: "Category deleted." });
+  }
+});
