@@ -117,8 +117,8 @@ const Header = () => {
                     />
                     Add Category
                   </a>
-                  <button
-                    key="Remove"
+                  <a
+                    href="/category/form/delete"
                     className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
                   >
                     <MinusCircleIcon
@@ -126,7 +126,7 @@ const Header = () => {
                       aria-hidden="true"
                     />
                     Remove Category
-                  </button>
+                  </a>
                 </div>
               </Popover.Panel>
             </Transition>
@@ -203,8 +203,8 @@ const Header = () => {
                           />
                           Add Category
                         </a>
-                        <button
-                          key="Remove"
+                        <a
+                          href="/category/form/delete"
                           className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
                         >
                           <MinusCircleIcon
@@ -212,7 +212,7 @@ const Header = () => {
                             aria-hidden="true"
                           />
                           Remove Category
-                        </button>
+                        </a>
                       </Disclosure.Panel>
                     </>
                   )}
