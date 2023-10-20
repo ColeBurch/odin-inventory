@@ -7,21 +7,50 @@ import {
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 
+type CategoryType = {
+  _id: string;
+  name: string;
+  description: string;
+  __v: number;
+}[];
+
 const CategoryDeleteForm = () => {
-  const [name, setName] = React.useState<string>("");
-  const [description, setDescription] = React.useState<string>("");
+  const [categories, setCategories] = React.useState<CategoryType>([]);
+
+  const getCategories = () => {
+    axios
+      .get("http://localhost:3000/api/categories")
+      .then((res) => {
+        if (res.data) {
+          setCategories(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  React.useEffect(() => {
+    getCategories();
+  }, []);
+
+  const [categoryName, setCategoryName] = React.useState<string>("");
   const [requestStatusBox, setRequestStatusBox] =
     React.useState<boolean>(false);
   const [requestCode, setRequestCode] = React.useState<boolean>(false);
   const [requestMessage, setRequestMessage] = React.useState<string>("");
 
   const handleSubmit = (event: any) => {
-    const data = { name, description };
+    const category = categories.find(
+      (category) => category.name === categoryName
+    );
+    const data = { _id: category?._id };
+    console.log(data);
     axios
-      .post("http://localhost:3000/api/categories", data)
+      .post("http://localhost:3000/api/categories/delete", data)
       .then((res) => {
         setRequestCode(true);
-        setRequestMessage(res.data.name + " added successfully!");
+        setRequestMessage(res.data.message);
         setRequestStatusBox(true);
       })
       .catch((err) => {
@@ -45,28 +74,20 @@ const CategoryDeleteForm = () => {
         >
           Category Name:
         </label>
-        <input
-          type="text"
+        <select
           name="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={categoryName}
+          onChange={(e) => setCategoryName(e.target.value)}
           required
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
-        />
-        <label
-          htmlFor="description"
-          className="block text-gray-700 text-xl font-bold mb-2"
         >
-          Description:
-        </label>
-        <input
-          type="text"
-          name="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
-        />
+          {categories.map((category) => (
+            <option key={category._id} value={category.name}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+
         <button
           type={"submit"}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"

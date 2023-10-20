@@ -10,7 +10,7 @@ router.get("/categories/:id", category_controller.category_detail);
 
 router.post("/categories", category_controller.category_post);
 
-router.delete("/categories", category_controller.category_delete);
+router.post("/categories/delete", category_controller.category_delete);
 
 router.get("/products", product_controller.product_list);
 
