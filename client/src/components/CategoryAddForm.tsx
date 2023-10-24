@@ -33,7 +33,7 @@ const CategoryAddForm = () => {
   };
 
   return (
-    <div className="w-full bg-white mt-16 min-h-full">
+    <div className="w-full bg-white mt-16 min-h-full h-screen">
       <form
         onSubmit={handleSubmit}
         className="flex flex-col items-center justify-center bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 mx-auto w-72 lg:w-1/3"
