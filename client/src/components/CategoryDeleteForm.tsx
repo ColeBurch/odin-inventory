@@ -1,10 +1,12 @@
 import React from "react";
 import axios from "axios";
 import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Transition, Listbox } from "@headlessui/react";
 import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
+  CheckIcon,
+  ChevronUpDownIcon,
 } from "@heroicons/react/24/outline";
 
 type CategoryType = {
@@ -15,7 +17,13 @@ type CategoryType = {
 }[];
 
 const CategoryDeleteForm = () => {
-  const [categories, setCategories] = React.useState<CategoryType>([]);
+  const [categories, setCategories] = React.useState<CategoryType>([
+    { _id: "", name: "", description: "", __v: 0 },
+  ]);
+
+  function classNames(...classes: any) {
+    return classes.filter(Boolean).join(" ");
+  }
 
   const getCategories = () => {
     axios
@@ -34,16 +42,14 @@ const CategoryDeleteForm = () => {
     getCategories();
   }, []);
 
-  const [categoryName, setCategoryName] = React.useState<string>("");
+  const [selected, setSelected] = React.useState<any>(categories[0]);
   const [requestStatusBox, setRequestStatusBox] =
     React.useState<boolean>(false);
   const [requestCode, setRequestCode] = React.useState<boolean>(false);
   const [requestMessage, setRequestMessage] = React.useState<string>("");
 
   const handleSubmit = (event: any) => {
-    const category = categories.find(
-      (category) => category.name === categoryName
-    );
+    const category = selected;
     const data = { _id: category?._id };
     console.log(data);
     axios
@@ -74,19 +80,79 @@ const CategoryDeleteForm = () => {
         >
           Category Name:
         </label>
-        <select
-          name="name"
-          value={categoryName}
-          onChange={(e) => setCategoryName(e.target.value)}
-          required
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
-        >
-          {categories.map((category) => (
-            <option key={category._id} value={category.name}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+        <Listbox value={selected} onChange={setSelected}>
+          {({ open }) => (
+            <>
+              <div className="relative mt-2">
+                <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-20 pr-20 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                  <span className="flex items-center">
+                    <span className="ml-3 block truncate">{selected.name}</span>
+                  </span>
+                  <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+                    <ChevronUpDownIcon
+                      className="h-5 w-5 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  </span>
+                </Listbox.Button>
+
+                <Transition
+                  show={open}
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                    {categories.map((category) => (
+                      <Listbox.Option
+                        key={category._id}
+                        className={({ active }) =>
+                          classNames(
+                            active
+                              ? "bg-indigo-600 text-white"
+                              : "text-gray-900",
+                            "relative cursor-default select-none py-2 pl-3 pr-9"
+                          )
+                        }
+                        value={category}
+                      >
+                        {({ selected, active }) => (
+                          <>
+                            <div className="flex items-center">
+                              <span
+                                className={classNames(
+                                  selected ? "font-semibold" : "font-normal",
+                                  "ml-3 block truncate"
+                                )}
+                              >
+                                {category.name}
+                              </span>
+                            </div>
+
+                            {selected ? (
+                              <span
+                                className={classNames(
+                                  active ? "text-white" : "text-indigo-600",
+                                  "absolute inset-y-0 right-0 flex items-center pr-4"
+                                )}
+                              >
+                                <CheckIcon
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                            ) : null}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
+              </div>
+            </>
+          )}
+        </Listbox>
 
         <button
           type={"submit"}
