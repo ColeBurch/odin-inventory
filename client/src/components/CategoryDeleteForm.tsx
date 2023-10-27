@@ -71,7 +71,7 @@ const CategoryDeleteForm = () => {
     <div className="w-full bg-white mt-16 min-h-full h-screen">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col items-center justify-center bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 mx-auto w-72 lg:w-1/3"
+        className="flex flex-col items-center justify-center bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 mx-auto w-80 lg:w-1/3"
       >
         <h1 className="text-3xl font-bold mb-4">Remove Category</h1>
         <label
