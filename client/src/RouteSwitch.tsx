@@ -5,6 +5,7 @@ import Inventory from "./pages/Inventory";
 import ProductDetail from "./pages/ProductDetail";
 import CategoryAddPage from "./pages/CategoryAddPage";
 import CategoryDeletePage from "./pages/CategoryDeletePage";
+import CategoryDetailPage from "./pages/CategoryDetailPage";
 
 export const RouteSwitch = () => {
   return (
@@ -15,6 +16,7 @@ export const RouteSwitch = () => {
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/category/form/add" element={<CategoryAddPage />} />
         <Route path="/category/form/delete" element={<CategoryDeletePage />} />
+        <Route path="/category/:id" element={<CategoryDetailPage />} />
       </Routes>
     </BrowserRouter>
   );

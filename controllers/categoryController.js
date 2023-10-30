@@ -9,8 +9,10 @@ exports.category_list = asyncHandler(async (req, res, next) => {
 });
 
 exports.category_detail = asyncHandler(async (req, res, next) => {
-  const category = await Category.findById(req.params.id).exec();
-  res.json(category);
+  const categoryProducts = await Product.find({
+    category: req.params.id,
+  }).exec();
+  res.json(categoryProducts);
 });
 
 exports.category_post = [

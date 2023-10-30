@@ -95,7 +95,7 @@ const Header = () => {
                       </div>
                       <div className="flex-auto">
                         <a
-                          href={"/"}
+                          href={"/category/" + item._id}
                           className="block font-semibold text-gray-900"
                         >
                           {item.name}
@@ -187,7 +187,7 @@ const Header = () => {
                           <Disclosure.Button
                             key={item._id}
                             as="a"
-                            href={"/"}
+                            href={"/category/" + item._id}
                             className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                           >
                             {item.name}
