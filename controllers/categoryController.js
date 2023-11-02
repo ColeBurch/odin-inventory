@@ -81,3 +81,49 @@ exports.category_delete = asyncHandler(async (req, res, next) => {
     res.json({ message: "Category deleted." });
   }
 });
+
+exports.category_update = [
+  body("name", "Name must be longer than 3 characters.")
+    .trim()
+    .isLength({ min: 3 }),
+  body("description", "Description must be longer than 3 characters.")
+    .trim()
+    .isLength({ min: 3 }),
+  body("id", "ID must be present.").trim().isLength({ min: 1 }),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    const category = new Category({
+      _id: req.params.id,
+      name: req.body.name,
+      description: req.body.description,
+    });
+
+    if (!errors.isEmpty()) {
+      res.status(401).json({ errors: errors.array() });
+    } else {
+      const categoryExists = await Category.findOne({
+        name: req.body.name,
+      }).exec();
+      if (!categoryExists) {
+        res.status(401).json({
+          errors: [
+            {
+              location: "body",
+              msg: "Category does not exist.",
+              path: "name",
+              type: "field",
+              value: req.body.name,
+            },
+          ],
+        });
+      } else {
+        const newCategory = await category
+          .findByIdAndUpdate(req.body.id)
+          .exec();
+        res.json(newCategory);
+      }
+    }
+  }),
+];

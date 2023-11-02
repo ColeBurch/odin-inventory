@@ -12,6 +12,8 @@ router.post("/categories", category_controller.category_post);
 
 router.post("/categories/delete", category_controller.category_delete);
 
+router.post("/categories/update", category_controller.category_update);
+
 router.get("/products", product_controller.product_list);
 
 router.get("/products/:id", product_controller.product_detail);
