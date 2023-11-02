@@ -11,8 +11,16 @@ type InventoryType = {
   __v: number;
 }[];
 
+type CategoryType = {
+  _id: string;
+  name: string;
+  description: string;
+  __v: number;
+}[];
+
 const CategoryDetail = () => {
   const [inventory, setInventory] = React.useState<InventoryType>([]);
+  const [categories, setCategories] = React.useState<CategoryType>([]);
   const { id } = useParams();
 
   React.useEffect(() => {
@@ -29,15 +37,32 @@ const CategoryDetail = () => {
         });
     };
 
+    const getCategories = () => {
+      axios
+        .get("http://localhost:3000/api/categories")
+        .then((res) => {
+          if (res.data) {
+            setCategories(res.data);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
     getInventory();
+    getCategories();
   }, [id]);
 
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-          Welcome to your inventory!
+          {categories.filter((category) => category._id === id)[0]?.name}
         </h2>
+        <h3 className="text-l tracking-tight text-gray-700">
+          {categories.filter((category) => category._id === id)[0]?.description}
+        </h3>
 
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {inventory.map((product) => (
