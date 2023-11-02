@@ -67,6 +67,11 @@ const CategoryDeleteForm = () => {
     event.preventDefault();
   };
 
+  const onClosePageReload = () => {
+    setRequestStatusBox(false);
+    window.location.reload();
+  };
+
   return (
     <div className="w-full bg-white mt-16 min-h-full h-screen">
       <form
@@ -162,11 +167,7 @@ const CategoryDeleteForm = () => {
         </button>
       </form>
       <Transition.Root show={requestStatusBox} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-10"
-          onClose={setRequestStatusBox}
-        >
+        <Dialog as="div" className="relative z-10" onClose={onClosePageReload}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -228,7 +229,7 @@ const CategoryDeleteForm = () => {
                     <button
                       type="button"
                       className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
-                      onClick={() => setRequestStatusBox(false)}
+                      onClick={() => onClosePageReload()}
                     >
                       {requestCode ? "Close" : "Try Again"}
                     </button>
