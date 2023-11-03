@@ -7,6 +7,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
+  PlusCircleIcon,
 } from "@heroicons/react/24/outline";
 
 type InventoryType = {
@@ -150,6 +151,17 @@ const CategoryDetail = () => {
               </div>
             </div>
           ))}
+          <div className="relative">
+            <button
+              onClick={() => console.log("Click")}
+              className="flex relative items-center justify-center aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-transparent outline-l outline-gray-500 outline z-10 lg:aspect-none lg:h-80"
+            >
+              <PlusCircleIcon className="h-1/3 w-1/3 object-cover object-center lg:h-1/2 lg:w-1/2" />
+            </button>
+            <div className="mt-4 flex justify-center">
+              <h3 className="text-l text-gray-700">Add a new product</h3>
+            </div>
+          </div>
         </div>
       </div>
       {/*Edit category form*/}
@@ -182,10 +194,10 @@ const CategoryDetail = () => {
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-gray-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                   <form
                     onSubmit={handleCategoryEdit}
-                    className="flex flex-col items-center justify-center bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 mx-auto w-full h-full"
+                    className="flex flex-col items-center justify-center bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mx-auto w-full h-full"
                   >
                     <h1 className="text-3xl font-bold mb-4">Edit Category</h1>
                     <label
