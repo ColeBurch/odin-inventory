@@ -94,18 +94,18 @@ exports.category_update = [
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
 
-    const category = new Category({
-      _id: req.params.id,
+    const newCategory = new Category({
       name: req.body.name,
       description: req.body.description,
+      _id: req.body.id,
     });
+
+    console.log(newCategory);
 
     if (!errors.isEmpty()) {
       res.status(401).json({ errors: errors.array() });
     } else {
-      const categoryExists = await Category.findOne({
-        name: req.body.name,
-      }).exec();
+      const categoryExists = await Category.findById(req.body.id).exec();
       if (!categoryExists) {
         res.status(401).json({
           errors: [
@@ -119,10 +119,12 @@ exports.category_update = [
           ],
         });
       } else {
-        const newCategory = await category
-          .findByIdAndUpdate(req.body.id)
-          .exec();
-        res.json(newCategory);
+        const databaseResponse = await Category.findByIdAndUpdate(
+          req.body.id,
+          newCategory,
+          {}
+        );
+        res.json(databaseResponse);
       }
     }
   }),
