@@ -18,6 +18,8 @@ router.get("/products", product_controller.product_list);
 
 router.get("/products/:id", product_controller.product_detail);
 
+router.post("/products", product_controller.product_post);
+
 router.get(
   "/productinstances",
   product_instance_controller.productinstance_list

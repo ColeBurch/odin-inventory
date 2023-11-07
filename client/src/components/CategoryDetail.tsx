@@ -30,6 +30,7 @@ const CategoryDetail = () => {
   const [inventory, setInventory] = React.useState<InventoryType>([]);
   const [categories, setCategories] = React.useState<CategoryType>([]);
   const { id } = useParams();
+  //edit cateogry form states
   const [name, setName] = React.useState<string>("");
   const [description, setDescription] = React.useState<string>("");
   const [editCategoryForm, setEditCategoryForm] =
@@ -39,6 +40,17 @@ const CategoryDetail = () => {
   const [editCategoryRequestCode, setEditCategoryRequestCode] =
     React.useState<boolean>(false);
   const [editCategoryRequestMessage, setEditCategoryRequestMessage] =
+    React.useState<string>("");
+  //add product form states
+  const [productName, setProductName] = React.useState<string>("");
+  const [productPrice, setProductPrice] = React.useState<number>(0);
+  const [productSummary, setProductSummary] = React.useState<string>("");
+  const [addProductForm, setAddProductForm] = React.useState<boolean>(false);
+  const [addProductRequestStatusBox, setAddProductRequestStatusBox] =
+    React.useState<boolean>(false);
+  const [addProductRequestCode, setAddProductRequestCode] =
+    React.useState<boolean>(false);
+  const [addProductRequestMessage, setAddProductRequestMessage] =
     React.useState<string>("");
 
   React.useEffect(() => {
@@ -84,6 +96,11 @@ const CategoryDetail = () => {
     window.location.reload();
   };
 
+  const addProductRequestStatusBoxOnClosePageReload = () => {
+    setAddProductRequestStatusBox(false);
+    window.location.reload();
+  };
+
   const handleCategoryEdit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = { name, description, id };
@@ -98,6 +115,28 @@ const CategoryDetail = () => {
         setEditCategoryRequestCode(false);
         setEditCategoryRequestMessage(err.response.data.errors[0].msg);
         setEditCategoryRequestStatusBox(true);
+      });
+  };
+
+  const handleAddProduct = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const addProductFormData = {
+      name: productName,
+      price: productPrice,
+      category: id,
+      summary: productSummary,
+    };
+    axios
+      .post("http://localhost:3000/api/products", addProductFormData)
+      .then((res) => {
+        setAddProductRequestCode(true);
+        setAddProductRequestMessage(res.data.name + " added successfully!");
+        setAddProductRequestStatusBox(true);
+      })
+      .catch((err) => {
+        setAddProductRequestCode(false);
+        setAddProductRequestMessage(err.response.data.errors[0].msg);
+        setAddProductRequestStatusBox(true);
       });
   };
 
@@ -153,7 +192,7 @@ const CategoryDetail = () => {
           ))}
           <div className="relative">
             <button
-              onClick={() => console.log("Click")}
+              onClick={() => setAddProductForm(true)}
               className="flex relative items-center justify-center aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-transparent outline-l outline-gray-500 outline z-10 lg:aspect-none lg:h-80"
             >
               <PlusCircleIcon className="h-1/3 w-1/3 object-cover object-center lg:h-1/2 lg:w-1/2" />
@@ -314,6 +353,174 @@ const CategoryDetail = () => {
                       }
                     >
                       {editCategoryRequestCode ? "Close" : "Try Again"}
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      {/*Add product form*/}
+      <Transition.Root show={addProductForm} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={setAddProductForm}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <form
+                    onSubmit={handleAddProduct}
+                    className="flex flex-col items-center justify-center bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mx-auto w-full h-full"
+                  >
+                    <h1 className="text-3xl font-bold mb-4">Add Product</h1>
+                    <label
+                      htmlFor="productName"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      Product Name:
+                    </label>
+                    <input
+                      type="text"
+                      name="productName"
+                      value={productName}
+                      onChange={(e) => setProductName(e.target.value)}
+                      required
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+                    />
+                    <label
+                      htmlFor="productPrice"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      Price:
+                    </label>
+                    <input
+                      type="number"
+                      name="productPrice"
+                      value={productPrice}
+                      onChange={(e) => setProductPrice(e.target.valueAsNumber)}
+                      required
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+                    />
+                    <label
+                      htmlFor="Summary"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      Summary:
+                    </label>
+                    <input
+                      type="text"
+                      name="Summary"
+                      value={productSummary}
+                      onChange={(e) => setProductSummary(e.target.value)}
+                      required
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+                    />
+                    <button
+                      type={"submit"}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      {/*Add product request status box*/}
+      <Transition.Root show={addProductRequestStatusBox} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-20"
+          onClose={addProductRequestStatusBoxOnClosePageReload}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div className="sm:flex sm:items-start">
+                      {addProductRequestCode ? (
+                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                          <CheckCircleIcon
+                            className="h-6 w-6 text-green-600"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      ) : (
+                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                          <ExclamationTriangleIcon
+                            className="h-6 w-6 text-red-600"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      )}
+
+                      <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                        <Dialog.Title
+                          as="h3"
+                          className="text-base font-semibold leading-6 text-gray-900"
+                        >
+                          {addProductRequestCode ? "Success!" : "Error!"}
+                        </Dialog.Title>
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500">
+                            {addProductRequestMessage}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                    <button
+                      type="button"
+                      className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+                      onClick={() =>
+                        addProductRequestStatusBoxOnClosePageReload()
+                      }
+                    >
+                      {addProductRequestCode ? "Close" : "Try Again"}
                     </button>
                   </div>
                 </Dialog.Panel>
