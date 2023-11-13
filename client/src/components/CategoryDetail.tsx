@@ -3,11 +3,13 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Transition, Listbox } from "@headlessui/react";
 import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
   PlusCircleIcon,
+  CheckIcon,
+  ChevronUpDownIcon,
 } from "@heroicons/react/24/outline";
 
 type InventoryType = {
@@ -51,6 +53,17 @@ const CategoryDetail = () => {
   const [addProductRequestCode, setAddProductRequestCode] =
     React.useState<boolean>(false);
   const [addProductRequestMessage, setAddProductRequestMessage] =
+    React.useState<string>("");
+  //delete product form states
+  const [deleteProductForm, setDeleteProductForm] =
+    React.useState<boolean>(false);
+  const [deleteProductSelected, setDeleteProductSelected] =
+    React.useState<any>("");
+  const [deleteProductRequestStatusBox, setDeleteProductRequestStatusBox] =
+    React.useState<boolean>(false);
+  const [deleteProductRequestCode, setDeleteProductRequestCode] =
+    React.useState<boolean>(false);
+  const [deleteProductRequestMessage, setDeleteProductRequestMessage] =
     React.useState<string>("");
 
   React.useEffect(() => {
@@ -101,6 +114,11 @@ const CategoryDetail = () => {
     window.location.reload();
   };
 
+  const deleteProductRequestStatusBoxOnClosePageReload = () => {
+    setDeleteProductRequestStatusBox(false);
+    window.location.reload();
+  };
+
   const handleCategoryEdit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = { name, description, id };
@@ -140,27 +158,57 @@ const CategoryDetail = () => {
       });
   };
 
+  function classNames(...classes: any) {
+    return classes.filter(Boolean).join(" ");
+  }
+
+  const handleDeleteProduct = (event: any) => {
+    event.preventDefault();
+    const product = deleteProductSelected;
+    const data = { _id: product?._id };
+    axios
+      .post("http://localhost:3000/api/products/delete", data)
+      .then((res) => {
+        setDeleteProductRequestCode(true);
+        setDeleteProductRequestMessage(res.data.message);
+        setDeleteProductRequestStatusBox(true);
+      })
+      .catch((err) => {
+        setDeleteProductRequestCode(false);
+        setDeleteProductRequestMessage(err.response.data.errors[0].msg);
+        setDeleteProductRequestStatusBox(true);
+      });
+  };
+
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <div className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6">
-          <button
-            onClick={() => setEditCategoryForm(true)}
-            className="flex h-9 w-9 flex-none items-center justify-center rounded-l hover:bg-gray-50"
-          >
-            <PencilSquareIcon className="h-6 w-auto" />
-          </button>
-          <div className="flex-auto">
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-              {categories.filter((category) => category._id === id)[0]?.name}
-            </h2>
-            <h3 className="text-l tracking-tight text-gray-700">
-              {
-                categories.filter((category) => category._id === id)[0]
-                  ?.description
-              }
-            </h3>
+        <div className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 justify-between">
+          <div className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6">
+            <button
+              onClick={() => setEditCategoryForm(true)}
+              className="flex h-9 w-9 flex-none items-center justify-center rounded-l hover:bg-gray-50"
+            >
+              <PencilSquareIcon className="h-6 w-auto" />
+            </button>
+            <div className="flex-auto">
+              <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+                {categories.filter((category) => category._id === id)[0]?.name}
+              </h2>
+              <h3 className="text-l tracking-tight text-gray-700">
+                {
+                  categories.filter((category) => category._id === id)[0]
+                    ?.description
+                }
+              </h3>
+            </div>
           </div>
+          <button
+            onClick={() => setDeleteProductForm(true)}
+            className="bg-gray-100 text-gray-700 px-2 py-1 rounded-md hover:bg-gray-200"
+          >
+            Remove Product
+          </button>
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
@@ -521,6 +569,225 @@ const CategoryDetail = () => {
                       }
                     >
                       {addProductRequestCode ? "Close" : "Try Again"}
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      {/*Delete product form*/}
+      <Transition.Root show={deleteProductForm} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={setDeleteProductForm}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <form
+                    onSubmit={handleDeleteProduct}
+                    className="flex flex-col items-center justify-center bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mx-auto w-full h-full"
+                  >
+                    <h1 className="text-3xl font-bold mb-4">Remove Product</h1>
+                    <label
+                      htmlFor="name"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      Product Name:
+                    </label>
+                    <Listbox
+                      value={deleteProductSelected}
+                      onChange={setDeleteProductSelected}
+                    >
+                      {({ open }) => (
+                        <>
+                          <div className="relative mt-2">
+                            <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-20 pr-20 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                              <span className="flex items-center">
+                                <span className="ml-3 block truncate">
+                                  {deleteProductSelected.name}
+                                </span>
+                              </span>
+                              <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+                                <ChevronUpDownIcon
+                                  className="h-5 w-5 text-gray-400"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                            </Listbox.Button>
+
+                            <Transition
+                              show={open}
+                              as={Fragment}
+                              leave="transition ease-in duration-100"
+                              leaveFrom="opacity-100"
+                              leaveTo="opacity-0"
+                            >
+                              <Listbox.Options className="relative z-20 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                {inventory.map((product) => (
+                                  <Listbox.Option
+                                    key={product._id}
+                                    className={({ active }) =>
+                                      classNames(
+                                        active
+                                          ? "bg-indigo-600 text-white"
+                                          : "text-gray-900",
+                                        "relative cursor-default select-none py-2 pl-3 pr-9"
+                                      )
+                                    }
+                                    value={product}
+                                  >
+                                    {({ selected, active }) => (
+                                      <>
+                                        <div className="flex items-center">
+                                          <span
+                                            className={classNames(
+                                              selected
+                                                ? "font-semibold"
+                                                : "font-normal",
+                                              "ml-3 block truncate"
+                                            )}
+                                          >
+                                            {product.name}
+                                          </span>
+                                        </div>
+
+                                        {selected ? (
+                                          <span
+                                            className={classNames(
+                                              active
+                                                ? "text-white"
+                                                : "text-indigo-600",
+                                              "absolute inset-y-0 right-0 flex items-center pr-4"
+                                            )}
+                                          >
+                                            <CheckIcon
+                                              className="h-5 w-5"
+                                              aria-hidden="true"
+                                            />
+                                          </span>
+                                        ) : null}
+                                      </>
+                                    )}
+                                  </Listbox.Option>
+                                ))}
+                              </Listbox.Options>
+                            </Transition>
+                          </div>
+                        </>
+                      )}
+                    </Listbox>
+
+                    <button
+                      type={"submit"}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      {/*Delete product request status box*/}
+      <Transition.Root show={deleteProductRequestStatusBox} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={deleteProductRequestStatusBoxOnClosePageReload}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div className="sm:flex sm:items-start">
+                      {deleteProductRequestCode ? (
+                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                          <CheckCircleIcon
+                            className="h-6 w-6 text-green-600"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      ) : (
+                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                          <ExclamationTriangleIcon
+                            className="h-6 w-6 text-red-600"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      )}
+
+                      <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                        <Dialog.Title
+                          as="h3"
+                          className="text-base font-semibold leading-6 text-gray-900"
+                        >
+                          {deleteProductRequestCode ? "Success!" : "Error!"}
+                        </Dialog.Title>
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500">
+                            {deleteProductRequestMessage}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                    <button
+                      type="button"
+                      className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+                      onClick={() =>
+                        deleteProductRequestStatusBoxOnClosePageReload()
+                      }
+                    >
+                      {deleteProductRequestCode ? "Close" : "Try Again"}
                     </button>
                   </div>
                 </Dialog.Panel>

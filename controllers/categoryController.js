@@ -58,8 +58,7 @@ exports.category_post = [
 ];
 
 exports.category_delete = asyncHandler(async (req, res, next) => {
-  const [category, allProductsInCategory] = await Promise.all([
-    Category.findById(req.body._id).exec(),
+  const [allProductsInCategory] = await Promise.all([
     Product.find({ category: req.body._id }).exec(),
   ]);
 

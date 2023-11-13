@@ -2,6 +2,7 @@ const Category = require("../models/category");
 const asyncHandler = require("express-async-handler");
 const Product = require("../models/product");
 const { body, validationResult } = require("express-validator");
+const ProductInstance = require("../models/productInstance");
 
 exports.product_list = asyncHandler(async (req, res, next) => {
   const products = await Product.find().exec();
@@ -57,3 +58,27 @@ exports.product_post = [
     }
   }),
 ];
+
+exports.product_delete = asyncHandler(async (req, res, next) => {
+  const [allProductInstancesInProduct] = await Promise.all([
+    ProductInstance.find({ product: req.body._id }).exec(),
+  ]);
+
+  if (allProductInstancesInProduct.length > 0) {
+    res.status(401).json({
+      errors: [
+        {
+          location: "body",
+          msg: "Cannot delete product that contains instances.",
+          path: "name",
+          type: "field",
+          value: req.body.name,
+        },
+      ],
+    });
+    return;
+  } else {
+    await Product.findByIdAndDelete(req.body._id).exec();
+    res.json({ message: "Product deleted." });
+  }
+});

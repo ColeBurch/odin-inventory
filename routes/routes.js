@@ -20,6 +20,8 @@ router.get("/products/:id", product_controller.product_detail);
 
 router.post("/products", product_controller.product_post);
 
+router.post("/products/delete", product_controller.product_delete);
+
 router.get(
   "/productinstances",
   product_instance_controller.productinstance_list
