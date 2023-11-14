@@ -37,8 +37,19 @@ const ProductDetailPage = () => {
   const [productInstances, setProductInstances] =
     React.useState<ProductInstanceType>([]);
 
-  const [editCategoryForm, setEditCategoryForm] = React.useState(false);
+  // Edit Product form states
+  const [productName, setProductName] = React.useState<string>("");
+  const [productPrice, setProductPrice] = React.useState<number>(0);
+  const [productSummary, setProductSummary] = React.useState<string>("");
+  const [editProductForm, setEditProductForm] = React.useState<boolean>(false);
+  const [editProductRequestStatusBox, setEditProductRequestStatusBox] =
+    React.useState<boolean>(false);
+  const [editProductRequestCode, setEditProductRequestCode] =
+    React.useState<boolean>(false);
+  const [editProductRequestMessage, setEditProductRequestMessage] =
+    React.useState<string>("");
 
+  // delete product instance states
   const [deleteProductInstanceModal, setDeleteProductInstanceModal] =
     React.useState(false);
   const [deleteProductInstanceID, setDeleteProductInstanceID] =
@@ -63,7 +74,9 @@ const ProductDetailPage = () => {
         .then((res) => {
           if (res.data) {
             setProductDetails(res.data);
-            console.log(res.data);
+            setProductName(res.data.name);
+            setProductPrice(res.data.price);
+            setProductSummary(res.data.summary);
           }
         })
         .catch((err) => {
@@ -122,12 +135,44 @@ const ProductDetailPage = () => {
     window.location.reload();
   };
 
+  const handleProductEdit = (e: any) => {
+    e.preventDefault();
+    const data = {
+      id: id,
+      name: productName,
+      price: productPrice,
+      category: productDetails.category,
+      summary: productSummary,
+    };
+    axios
+      .post("http://localhost:3000/api/products/update", data)
+      .then((res) => {
+        if (res.data) {
+          setEditProductRequestCode(true);
+          setEditProductRequestMessage(
+            res.data.name + " updated successfully!"
+          );
+          setEditProductRequestStatusBox(true);
+        }
+      })
+      .catch((err) => {
+        setEditProductRequestCode(false);
+        setEditProductRequestMessage(err.response.data.errors[0].msg);
+        setEditProductRequestStatusBox(true);
+      });
+  };
+
+  const editProductRequestStatusBoxOnClosePageReload = () => {
+    setEditProductRequestStatusBox(false);
+    window.location.reload();
+  };
+
   return (
     <div className="bg-white">
       <div className="mx-auto px-2 pt-8 sm:pt-16">
         <div className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6">
           <button
-            onClick={() => setEditCategoryForm(true)}
+            onClick={() => setEditProductForm(true)}
             className="flex h-9 w-9 flex-none items-center justify-center rounded-l hover:bg-gray-50"
           >
             <PencilSquareIcon className="h-6 w-auto" />
@@ -345,6 +390,174 @@ const ProductDetailPage = () => {
                       }
                     >
                       {deleteProductInstanceRequestCode ? "Close" : "Try Again"}
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      {/*edit product form*/}
+      <Transition.Root show={editProductForm} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={setEditProductForm}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <form
+                    onSubmit={handleProductEdit}
+                    className="flex flex-col items-center justify-center bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mx-auto w-full h-full"
+                  >
+                    <h1 className="text-3xl font-bold mb-4">Edit Product</h1>
+                    <label
+                      htmlFor="name"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      Product Name:
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={productName}
+                      onChange={(e) => setProductName(e.target.value)}
+                      required
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+                    />
+                    <label
+                      htmlFor="Price"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      Product Price:
+                    </label>
+                    <input
+                      type="number"
+                      name="Price"
+                      value={productPrice}
+                      onChange={(e) => setProductPrice(e.target.valueAsNumber)}
+                      required
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+                    />
+                    <label
+                      htmlFor="Summary"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      Summary:
+                    </label>
+                    <input
+                      type="text"
+                      name="description"
+                      value={productSummary}
+                      onChange={(e) => setProductSummary(e.target.value)}
+                      required
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+                    />
+                    <button
+                      type={"submit"}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      {/*edit product request box*/}
+      <Transition.Root show={editProductRequestStatusBox} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-20"
+          onClose={editProductRequestStatusBoxOnClosePageReload}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div className="sm:flex sm:items-start">
+                      {editProductRequestCode ? (
+                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                          <CheckCircleIcon
+                            className="h-6 w-6 text-green-600"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      ) : (
+                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                          <ExclamationTriangleIcon
+                            className="h-6 w-6 text-red-600"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      )}
+
+                      <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                        <Dialog.Title
+                          as="h3"
+                          className="text-base font-semibold leading-6 text-gray-900"
+                        >
+                          {editProductRequestCode ? "Success!" : "Error!"}
+                        </Dialog.Title>
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500">
+                            {editProductRequestMessage}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                    <button
+                      type="button"
+                      className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+                      onClick={() =>
+                        editProductRequestStatusBoxOnClosePageReload()
+                      }
+                    >
+                      {editProductRequestCode ? "Close" : "Try Again"}
                     </button>
                   </div>
                 </Dialog.Panel>

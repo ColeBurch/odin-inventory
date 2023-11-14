@@ -82,3 +82,52 @@ exports.product_delete = asyncHandler(async (req, res, next) => {
     res.json({ message: "Product deleted." });
   }
 });
+
+exports.product_update = [
+  body("name", "Name must be longer than 3 characters.")
+    .trim()
+    .isLength({ min: 3 }),
+  body("summary", "Summary must be longer than 3 characters.")
+    .trim()
+    .isLength({ min: 3 }),
+  body("category", "Category must be present.").trim().isLength({ min: 1 }),
+  body("id", "ID must be present.").trim().isLength({ min: 1 }),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    const newProduct = new Product({
+      name: req.body.name,
+      price: req.body.price,
+      category: req.body.category,
+      summary: req.body.description,
+      _id: req.body.id,
+    });
+
+    if (!errors.isEmpty()) {
+      res.status(401).json({ errors: errors.array() });
+    } else {
+      const productExists = await Product.findById(req.body.id).exec();
+      if (!productExists) {
+        res.status(401).json({
+          errors: [
+            {
+              location: "body",
+              msg: "Product does not exist.",
+              path: "name",
+              type: "field",
+              value: req.body.name,
+            },
+          ],
+        });
+      } else {
+        const databaseResponse = await Product.findByIdAndUpdate(
+          req.body.id,
+          newProduct,
+          {}
+        );
+        res.json(databaseResponse);
+      }
+    }
+  }),
+];
