@@ -37,4 +37,9 @@ router.get(
   product_instance_controller.product_specific_instances
 );
 
+router.post(
+  "/productinstances/delete",
+  product_instance_controller.productInstance_delete
+);
+
 module.exports = router;

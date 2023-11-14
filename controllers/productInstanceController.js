@@ -22,3 +22,27 @@ exports.product_specific_instances = asyncHandler(async (req, res, next) => {
   }).exec();
   res.json(productinstances);
 });
+
+exports.productInstance_delete = asyncHandler(async (req, res, next) => {
+  const [productInstance] = await Promise.all([
+    ProductInstance.findById(req.body._id).exec(),
+  ]);
+
+  if (productInstance.quantity > 0) {
+    res.status(401).json({
+      errors: [
+        {
+          location: "body",
+          msg: "Cannot delete product instance with quantity greater than zero.",
+          path: "name",
+          type: "field",
+          value: req.body.name,
+        },
+      ],
+    });
+    return;
+  } else {
+    await ProductInstance.findByIdAndDelete(req.body._id).exec();
+    res.json({ message: "Product instance deleted." });
+  }
+});
