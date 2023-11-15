@@ -19,12 +19,12 @@ type ProductDetailType = {
 };
 
 type ProductInstanceType = {
-  __v?: number;
-  _id?: string;
-  color?: string;
-  product?: string;
-  quantity?: number;
-  size?: string;
+  __v: number;
+  _id: string;
+  color: string;
+  product: string;
+  quantity: number;
+  size: string;
 }[];
 
 const ProductDetailPage = () => {
@@ -86,6 +86,42 @@ const ProductDetailPage = () => {
     deleteProductInstanceRequestMessage,
     setDeleteProductInstanceRequestMessage,
   ] = React.useState<string>("");
+
+  // Edit product instance states
+  const [editProductInstanceId, setEditProductInstanceId] =
+    React.useState<string>("");
+  const [editProductInstanceColor, setEditProductInstanceColor] =
+    React.useState<string>("");
+  const [editProductInstanceSize, setEditProductInstanceSize] =
+    React.useState<string>("");
+  const [editProductInstanceQuantity, setEditProductInstanceQuantity] =
+    React.useState<number>(0);
+  const [editProductInstanceForm, setEditProductInstanceForm] =
+    React.useState<boolean>(false);
+  const [
+    editProductInstanceRequestStatusBox,
+    setEditProductInstanceRequestStatusBox,
+  ] = React.useState<boolean>(false);
+  const [editProductInstanceRequestCode, setEditProductInstanceRequestCode] =
+    React.useState<boolean>(false);
+  const [
+    editProductInstanceRequestMessage,
+    setEditProductInstanceRequestMessage,
+  ] = React.useState<string>("");
+
+  // Add product instance states
+  const [addProductInstanceQuantity, setAddProductInstanceQuantity] =
+    React.useState<number>(0);
+  const [addQuantityProductInstanceForm, setAddQuantityProductInstanceForm] =
+    React.useState<boolean>(false);
+
+  // Subtract product instance states
+  const [subtractProductInstanceQuantity, setSubtractProductInstanceQuantity] =
+    React.useState<number>(0);
+  const [
+    subtractQuantityProductInstanceForm,
+    setSubtractQuantityProductInstanceForm,
+  ] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const getProductDetails = () => {
@@ -219,6 +255,126 @@ const ProductDetailPage = () => {
     window.location.reload();
   };
 
+  const handleEditProductInstance = (e: any) => {
+    e.preventDefault();
+    const editProductInstanceData = {
+      id: editProductInstanceId,
+      product: id,
+      color: editProductInstanceColor,
+      size: editProductInstanceSize,
+      quantity: editProductInstanceQuantity,
+    };
+    axios
+      .post(
+        "http://localhost:3000/api/productinstances/update",
+        editProductInstanceData
+      )
+      .then((res) => {
+        if (res.data) {
+          setEditProductInstanceRequestCode(true);
+          setEditProductInstanceRequestMessage(
+            "Product Instance updated successfully!"
+          );
+          setEditProductInstanceRequestStatusBox(true);
+        }
+      })
+      .catch((err) => {
+        setEditProductInstanceRequestCode(false);
+        setEditProductInstanceRequestMessage(err.response.data.errors[0].msg);
+        setEditProductInstanceRequestStatusBox(true);
+      });
+  };
+
+  const editProductInstanceFormSet =
+    (id: string, color: string, size: string, quantity: number) => () => {
+      setEditProductInstanceId(id);
+      setEditProductInstanceColor(color);
+      setEditProductInstanceSize(size);
+      setEditProductInstanceQuantity(quantity);
+      setEditProductInstanceForm(true);
+    };
+
+  const editProductInstanceRequestStatusBoxOnClosePageReload = () => {
+    setEditProductInstanceRequestStatusBox(false);
+    window.location.reload();
+  };
+
+  const addQuantityProductInstanceFormSet =
+    (id: string, color: string, size: string) => () => {
+      setEditProductInstanceId(id);
+      setEditProductInstanceColor(color);
+      setEditProductInstanceSize(size);
+      setAddQuantityProductInstanceForm(true);
+    };
+
+  const handleAddQuantityProductInstance = (e: any) => {
+    e.preventDefault();
+    const addQuantityProductInstanceData = {
+      id: editProductInstanceId,
+      product: id,
+      color: editProductInstanceColor,
+      size: editProductInstanceSize,
+      quantity: addProductInstanceQuantity,
+    };
+    axios
+      .post(
+        "http://localhost:3000/api/productinstances/update/addquantity",
+        addQuantityProductInstanceData
+      )
+      .then((res) => {
+        if (res.data) {
+          setEditProductInstanceRequestCode(true);
+          setEditProductInstanceRequestMessage(
+            "Product Instance updated successfully!"
+          );
+          setEditProductInstanceRequestStatusBox(true);
+        }
+      })
+      .catch((err) => {
+        setEditProductInstanceRequestCode(false);
+        setEditProductInstanceRequestMessage(err.response.data.errors[0].msg);
+        setEditProductInstanceRequestStatusBox(true);
+      });
+  };
+
+  const subtractQuantityProductInstanceFormSet =
+    (id: string, color: string, size: string) => () => {
+      setEditProductInstanceId(id);
+      setEditProductInstanceColor(color);
+      setEditProductInstanceSize(size);
+      setSubtractQuantityProductInstanceForm(true);
+    };
+
+  const handleSubtractQuantityProductInstance = (e: any) => {
+    e.preventDefault();
+    const subtractQuantityProductInstanceData = {
+      id: editProductInstanceId,
+      product: id,
+      color: editProductInstanceColor,
+      size: editProductInstanceSize,
+      quantity: subtractProductInstanceQuantity,
+    };
+    axios
+      .post(
+        "http://localhost:3000/api/productinstances/update/subtractquantity",
+        subtractQuantityProductInstanceData
+      )
+      .then((res) => {
+        if (res.data) {
+          setEditProductInstanceRequestCode(true);
+          setEditProductInstanceRequestMessage(
+            "Product Instance updated successfully!"
+          );
+          setEditProductInstanceRequestStatusBox(true);
+        }
+      })
+      .catch((err) => {
+        setEditProductInstanceRequestCode(false);
+        setEditProductInstanceRequestMessage(err.response.data.errors[0].msg);
+        setEditProductInstanceRequestStatusBox(true);
+      });
+  };
+
   return (
     <div className="bg-white">
       <div className="mx-auto px-2 pt-8 sm:pt-16">
@@ -274,7 +430,15 @@ const ProductDetailPage = () => {
                 <td className="px-6 py-4">{productInstance.size}</td>
                 <td className="px-6 py-4">{productInstance.quantity}</td>
                 <td className="px-6 py-4 flex gap-1 flex-wrap">
-                  <button className="bg-gray-100 text-gray-700 px-2 py-1 rounded-md hover:bg-gray-200">
+                  <button
+                    onClick={editProductInstanceFormSet(
+                      productInstance._id,
+                      productInstance.color,
+                      productInstance.size,
+                      productInstance.quantity
+                    )}
+                    className="bg-gray-100 text-gray-700 px-2 py-1 rounded-md hover:bg-gray-200"
+                  >
                     Edit
                   </button>
                   <button
@@ -283,10 +447,24 @@ const ProductDetailPage = () => {
                   >
                     Delete
                   </button>
-                  <button className="bg-gray-100 text-gray-700 px-2 py-1 rounded-md hover:bg-gray-200">
+                  <button
+                    onClick={addQuantityProductInstanceFormSet(
+                      productInstance._id,
+                      productInstance.color,
+                      productInstance.size
+                    )}
+                    className="bg-gray-100 text-gray-700 px-2 py-1 rounded-md hover:bg-gray-200"
+                  >
                     Add
                   </button>
-                  <button className="bg-gray-100 text-gray-700 px-2 py-1 rounded-md hover:bg-gray-200">
+                  <button
+                    onClick={subtractQuantityProductInstanceFormSet(
+                      productInstance._id,
+                      productInstance.color,
+                      productInstance.size
+                    )}
+                    className="bg-gray-100 text-gray-700 px-2 py-1 rounded-md hover:bg-gray-200"
+                  >
                     Subtract
                   </button>
                 </td>
@@ -798,6 +976,306 @@ const ProductDetailPage = () => {
                       {editProductRequestCode ? "Close" : "Try Again"}
                     </button>
                   </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      {/*edit product instance form*/}
+      <Transition.Root show={editProductInstanceForm} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={setEditProductInstanceForm}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <form
+                    onSubmit={handleEditProductInstance}
+                    className="flex flex-col items-center justify-center bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mx-auto w-full h-full"
+                  >
+                    <h1 className="text-3xl font-bold mb-4">
+                      Edit Product Instance
+                    </h1>
+                    <label
+                      htmlFor="productInstanceColor"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      Color:
+                    </label>
+                    <input
+                      type="text"
+                      name="productInstanceColor"
+                      value={editProductInstanceColor}
+                      onChange={(e) =>
+                        setEditProductInstanceColor(e.target.value)
+                      }
+                      required
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+                    />
+                    <label
+                      htmlFor="ProductInstanceSize"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      Size:
+                    </label>
+                    <input
+                      type="text"
+                      name="productInstanceSize"
+                      value={editProductInstanceSize}
+                      onChange={(e) =>
+                        setEditProductInstanceSize(e.target.value)
+                      }
+                      required
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+                    />
+                    <button
+                      type={"submit"}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      {/*edit product instance request box*/}
+      <Transition.Root show={editProductInstanceRequestStatusBox} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-20"
+          onClose={editProductInstanceRequestStatusBoxOnClosePageReload}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div className="sm:flex sm:items-start">
+                      {editProductInstanceRequestCode ? (
+                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                          <CheckCircleIcon
+                            className="h-6 w-6 text-green-600"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      ) : (
+                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                          <ExclamationTriangleIcon
+                            className="h-6 w-6 text-red-600"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      )}
+
+                      <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                        <Dialog.Title
+                          as="h3"
+                          className="text-base font-semibold leading-6 text-gray-900"
+                        >
+                          {editProductInstanceRequestCode
+                            ? "Success!"
+                            : "Error!"}
+                        </Dialog.Title>
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500">
+                            {editProductInstanceRequestMessage}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                    <button
+                      type="button"
+                      className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+                      onClick={() =>
+                        editProductInstanceRequestStatusBoxOnClosePageReload()
+                      }
+                    >
+                      {editProductInstanceRequestCode ? "Close" : "Try Again"}
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      {/*add quantity product instance form*/}
+      <Transition.Root show={addQuantityProductInstanceForm} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={setAddQuantityProductInstanceForm}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <form
+                    onSubmit={handleAddQuantityProductInstance}
+                    className="flex flex-col items-center justify-center bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mx-auto w-full h-full"
+                  >
+                    <h1 className="text-3xl font-bold mb-4">Add Quantity</h1>
+                    <label
+                      htmlFor="productInstanceQuantity"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      How many items would you like to add?:
+                    </label>
+                    <input
+                      type="number"
+                      name="productInstanceQuantity"
+                      value={addProductInstanceQuantity}
+                      onChange={(e) =>
+                        setAddProductInstanceQuantity(e.target.valueAsNumber)
+                      }
+                      required
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+                    />
+                    <button
+                      type={"submit"}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      {/*Subtract quantity product instance form*/}
+      <Transition.Root show={subtractQuantityProductInstanceForm} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={setSubtractQuantityProductInstanceForm}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <form
+                    onSubmit={handleSubtractQuantityProductInstance}
+                    className="flex flex-col items-center justify-center bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mx-auto w-full h-full"
+                  >
+                    <h1 className="text-3xl font-bold mb-4">
+                      Subtract Quantity
+                    </h1>
+                    <label
+                      htmlFor="productInstanceQuantity"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      How many items would you like to subtract?:
+                    </label>
+                    <input
+                      type="number"
+                      name="productInstanceQuantity"
+                      value={subtractProductInstanceQuantity}
+                      onChange={(e) =>
+                        setSubtractProductInstanceQuantity(
+                          e.target.valueAsNumber
+                        )
+                      }
+                      required
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+                    />
+                    <button
+                      type={"submit"}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                    >
+                      Submit
+                    </button>
+                  </form>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

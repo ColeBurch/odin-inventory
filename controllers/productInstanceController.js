@@ -72,3 +72,182 @@ exports.productInstance_delete = asyncHandler(async (req, res, next) => {
     res.json({ message: "Product instance deleted." });
   }
 });
+
+exports.productInstance_update = [
+  body("color", "Color must be longer than 3 characters.")
+    .trim()
+    .isLength({ min: 3 }),
+  body("product", "product must be longer than 3 characters.")
+    .trim()
+    .isLength({ min: 3 }),
+  body("size", "size must be present.").trim().isLength({ min: 1 }),
+  body("id", "ID must be present.").trim().isLength({ min: 1 }),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    const newProductInstance = new ProductInstance({
+      product: req.body.product,
+      quantity: req.body.quantity,
+      size: req.body.size,
+      color: req.body.color,
+      _id: req.body.id,
+    });
+
+    if (!errors.isEmpty()) {
+      res.status(401).json({ errors: errors.array() });
+    } else {
+      const productInstanceExists = await ProductInstance.findById(
+        req.body.id
+      ).exec();
+      if (!productInstanceExists) {
+        res.status(401).json({
+          errors: [
+            {
+              location: "body",
+              msg: "Product Instance does not exist.",
+              path: "name",
+              type: "field",
+              value: req.body.name,
+            },
+          ],
+        });
+      } else {
+        const databaseResponse = await ProductInstance.findByIdAndUpdate(
+          req.body.id,
+          newProductInstance,
+          {}
+        );
+        res.json(databaseResponse);
+      }
+    }
+  }),
+];
+
+exports.productInstance_addQuantity = [
+  body("color", "Color must be longer than 3 characters.")
+    .trim()
+    .isLength({ min: 3 }),
+  body("product", "product must be longer than 3 characters.")
+    .trim()
+    .isLength({ min: 3 }),
+  body("size", "size must be present.").trim().isLength({ min: 1 }),
+  body("id", "ID must be present.").trim().isLength({ min: 1 }),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(401).json({ errors: errors.array() });
+    } else {
+      const productInstanceExists = await ProductInstance.findById(
+        req.body.id
+      ).exec();
+      if (!productInstanceExists) {
+        res.status(401).json({
+          errors: [
+            {
+              location: "body",
+              msg: "Product Instance does not exist.",
+              path: "name",
+              type: "field",
+              value: req.body.name,
+            },
+          ],
+        });
+      } else {
+        if (req.body.quantity < 0) {
+          res.status(401).json({
+            errors: [
+              {
+                location: "body",
+                msg: "Quantity must be positive.",
+                path: "name",
+                type: "field",
+                value: req.body.name,
+              },
+            ],
+          });
+        } else {
+          const newProductInstance = new ProductInstance({
+            product: req.body.product,
+            quantity: productInstanceExists.quantity + req.body.quantity,
+            size: req.body.size,
+            color: req.body.color,
+            _id: req.body.id,
+          });
+          const databaseResponse = await ProductInstance.findByIdAndUpdate(
+            req.body.id,
+            newProductInstance,
+            {}
+          );
+          res.json(databaseResponse);
+        }
+      }
+    }
+  }),
+];
+
+exports.productInstance_subtractQuantity = [
+  body("color", "Color must be longer than 3 characters.")
+    .trim()
+    .isLength({ min: 3 }),
+  body("product", "product must be longer than 3 characters.")
+    .trim()
+    .isLength({ min: 3 }),
+  body("size", "size must be present.").trim().isLength({ min: 1 }),
+  body("id", "ID must be present.").trim().isLength({ min: 1 }),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(401).json({ errors: errors.array() });
+    } else {
+      const productInstanceExists = await ProductInstance.findById(
+        req.body.id
+      ).exec();
+      if (!productInstanceExists) {
+        res.status(401).json({
+          errors: [
+            {
+              location: "body",
+              msg: "Product Instance does not exist.",
+              path: "name",
+              type: "field",
+              value: req.body.name,
+            },
+          ],
+        });
+      } else {
+        if (req.body.quantity > productInstanceExists.quantity) {
+          res.status(401).json({
+            errors: [
+              {
+                location: "body",
+                msg: "Quantity must be less than or equal to current quantity.",
+                path: "name",
+                type: "field",
+                value: req.body.name,
+              },
+            ],
+          });
+        } else {
+          const newProductInstance = new ProductInstance({
+            product: req.body.product,
+            quantity: productInstanceExists.quantity - req.body.quantity,
+            size: req.body.size,
+            color: req.body.color,
+            _id: req.body.id,
+          });
+          const databaseResponse = await ProductInstance.findByIdAndUpdate(
+            req.body.id,
+            newProductInstance,
+            {}
+          );
+          res.json(databaseResponse);
+        }
+      }
+    }
+  }),
+];

@@ -49,4 +49,19 @@ router.post(
   product_instance_controller.productInstance_delete
 );
 
+router.post(
+  "/productinstances/update",
+  product_instance_controller.productInstance_update
+);
+
+router.post(
+  "/productinstances/update/addquantity",
+  product_instance_controller.productInstance_addQuantity
+);
+
+router.post(
+  "/productinstances/update/subtractquantity",
+  product_instance_controller.productInstance_subtractQuantity
+);
+
 module.exports = router;
