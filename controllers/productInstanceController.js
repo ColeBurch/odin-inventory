@@ -23,6 +23,32 @@ exports.product_specific_instances = asyncHandler(async (req, res, next) => {
   res.json(productinstances);
 });
 
+exports.productInstance_post = [
+  body("color", "Color must be longer than 3 characters.")
+    .trim()
+    .isLength({ min: 3 }),
+  body("product", "Product must be present.").trim().isLength({ min: 1 }),
+  body("size", "Size must be present.").trim().isLength({ min: 1 }),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    const productInstance = new ProductInstance({
+      product: req.body.product,
+      quantity: req.body.quantity,
+      size: req.body.size,
+      color: req.body.color,
+    });
+
+    if (!errors.isEmpty()) {
+      res.status(401).json({ errors: errors.array() });
+    } else {
+      const newProductInstance = await productInstance.save();
+      res.json(newProductInstance);
+    }
+  }),
+];
+
 exports.productInstance_delete = asyncHandler(async (req, res, next) => {
   const [productInstance] = await Promise.all([
     ProductInstance.findById(req.body._id).exec(),

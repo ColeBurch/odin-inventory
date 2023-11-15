@@ -40,6 +40,11 @@ router.get(
 );
 
 router.post(
+  "/productinstances",
+  product_instance_controller.productInstance_post
+);
+
+router.post(
   "/productinstances/delete",
   product_instance_controller.productInstance_delete
 );
