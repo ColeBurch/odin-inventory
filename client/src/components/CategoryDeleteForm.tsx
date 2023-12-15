@@ -27,7 +27,9 @@ const CategoryDeleteForm = () => {
 
   const getCategories = () => {
     axios
-      .get("http://localhost:3000/api/categories")
+      .get("http://localhost:3000/api/categories", {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
       .then((res) => {
         if (res.data) {
           setCategories(res.data);
