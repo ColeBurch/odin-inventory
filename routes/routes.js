@@ -25,69 +25,111 @@ router.post("/login", authentication_controller.user_login);
 
 router.post("/register", authentication_controller.user_register);
 
-router.get("/auth");
-
 router.get(
   "/categories",
   passport.authenticate("jwt", { session: false }),
   category_controller.category_list
 );
 
-router.get("/categories/:id", category_controller.category_detail);
+router.get(
+  "/categories/:id",
+  passport.authenticate("jwt", { session: false }),
+  category_controller.category_detail
+);
 
-router.post("/categories", category_controller.category_post);
+router.post(
+  "/categories",
+  passport.authenticate("jwt", { session: false }),
+  category_controller.category_post
+);
 
-router.post("/categories/delete", category_controller.category_delete);
+router.post(
+  "/categories/delete",
+  passport.authenticate("jwt", { session: false }),
+  category_controller.category_delete
+);
 
-router.post("/categories/update", category_controller.category_update);
+router.post(
+  "/categories/update",
+  passport.authenticate("jwt", { session: false }),
+  category_controller.category_update
+);
 
-router.get("/products", product_controller.product_list);
+router.get(
+  "/products",
+  passport.authenticate("jwt", { session: false }),
+  product_controller.product_list
+);
 
-router.get("/products/:id", product_controller.product_detail);
+router.get(
+  "/products/:id",
+  passport.authenticate("jwt", { session: false }),
+  product_controller.product_detail
+);
 
-router.post("/products", product_controller.product_post);
+router.post(
+  "/products",
+  passport.authenticate("jwt", { session: false }),
+  product_controller.product_post
+);
 
-router.post("/products/delete", product_controller.product_delete);
+router.post(
+  "/products/delete",
+  passport.authenticate("jwt", { session: false }),
+  product_controller.product_delete
+);
 
-router.post("/products/update", product_controller.product_update);
+router.post(
+  "/products/update",
+  passport.authenticate("jwt", { session: false }),
+  product_controller.product_update
+);
 
 router.get(
   "/productinstances",
+  passport.authenticate("jwt", { session: false }),
   product_instance_controller.productinstance_list
 );
 
 router.get(
   "/productinstances/:id",
+  passport.authenticate("jwt", { session: false }),
   product_instance_controller.product_instance_detail
 );
 
 router.get(
   "/productinstances/product/:id",
+  passport.authenticate("jwt", { session: false }),
   product_instance_controller.product_specific_instances
 );
 
 router.post(
   "/productinstances",
+  passport.authenticate("jwt", { session: false }),
   product_instance_controller.productInstance_post
 );
 
 router.post(
   "/productinstances/delete",
+  passport.authenticate("jwt", { session: false }),
   product_instance_controller.productInstance_delete
 );
 
 router.post(
   "/productinstances/update",
+  passport.authenticate("jwt", { session: false }),
   product_instance_controller.productInstance_update
 );
 
 router.post(
   "/productinstances/update/addquantity",
+  passport.authenticate("jwt", { session: false }),
   product_instance_controller.productInstance_addQuantity
 );
 
 router.post(
   "/productinstances/update/subtractquantity",
+  passport.authenticate("jwt", { session: false }),
   product_instance_controller.productInstance_subtractQuantity
 );
 

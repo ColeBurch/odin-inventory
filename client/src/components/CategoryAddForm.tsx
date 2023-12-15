@@ -18,7 +18,9 @@ const CategoryAddForm = () => {
   const handleSubmit = (event: any) => {
     const data = { name, description };
     axios
-      .post("http://localhost:3000/api/categories", data)
+      .post("http://localhost:3000/api/categories", data, {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
       .then((res) => {
         setRequestCode(true);
         setRequestMessage(res.data.name + " added successfully!");

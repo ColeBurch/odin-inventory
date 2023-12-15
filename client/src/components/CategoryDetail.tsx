@@ -70,7 +70,7 @@ const CategoryDetail = () => {
     const getInventory = () => {
       axios
         .get("http://localhost:3000/api/categories/" + id, {
-          withCredentials: true,
+          headers: { Authorization: localStorage.getItem("token") },
         })
         .then((res) => {
           if (res.data) {
@@ -84,7 +84,9 @@ const CategoryDetail = () => {
 
     const getCategories = () => {
       axios
-        .get("http://localhost:3000/api/categories", { withCredentials: true })
+        .get("http://localhost:3000/api/categories", {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
         .then((res) => {
           if (res.data) {
             setCategories(res.data);
@@ -126,7 +128,7 @@ const CategoryDetail = () => {
     const data = { name, description, id };
     axios
       .post("http://localhost:3000/api/categories/update", data, {
-        withCredentials: true,
+        headers: { Authorization: localStorage.getItem("token") },
       })
       .then((res) => {
         setEditCategoryRequestCode(true);
@@ -150,7 +152,7 @@ const CategoryDetail = () => {
     };
     axios
       .post("http://localhost:3000/api/products", addProductFormData, {
-        withCredentials: true,
+        headers: { Authorization: localStorage.getItem("token") },
       })
       .then((res) => {
         setAddProductRequestCode(true);
@@ -174,7 +176,7 @@ const CategoryDetail = () => {
     const data = { _id: product?._id };
     axios
       .post("http://localhost:3000/api/products/delete", data, {
-        withCredentials: true,
+        headers: { Authorization: localStorage.getItem("token") },
       })
       .then((res) => {
         setDeleteProductRequestCode(true);

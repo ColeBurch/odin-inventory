@@ -126,7 +126,9 @@ const ProductDetailPage = () => {
   React.useEffect(() => {
     const getProductDetails = () => {
       axios
-        .get("http://localhost:3000/api/products/" + id)
+        .get("http://localhost:3000/api/products/" + id, {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
         .then((res) => {
           if (res.data) {
             setProductDetails(res.data);
@@ -142,7 +144,9 @@ const ProductDetailPage = () => {
 
     const getProductInstances = () => {
       axios
-        .get("http://localhost:3000/api/productinstances/" + id)
+        .get("http://localhost:3000/api/productinstances/" + id, {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
         .then((res) => {
           if (res.data) {
             const sortedInstances = res.data.sort((a: any, b: any) => {
@@ -171,7 +175,9 @@ const ProductDetailPage = () => {
     console.log(deleteProductInstanceID);
     const data = { _id: deleteProductInstanceID };
     axios
-      .post("http://localhost:3000/api/productinstances/delete", data)
+      .post("http://localhost:3000/api/productinstances/delete", data, {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
       .then((res) => {
         if (res.data) {
           setDeleteProductInstanceRequestCode(true);
@@ -201,7 +207,9 @@ const ProductDetailPage = () => {
       summary: productSummary,
     };
     axios
-      .post("http://localhost:3000/api/products/update", productEditData)
+      .post("http://localhost:3000/api/products/update", productEditData, {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
       .then((res) => {
         if (res.data) {
           setEditProductRequestCode(true);
@@ -234,7 +242,10 @@ const ProductDetailPage = () => {
     axios
       .post(
         "http://localhost:3000/api/productinstances",
-        productInstanceAddData
+        productInstanceAddData,
+        {
+          headers: { Authorization: localStorage.getItem("token") },
+        }
       )
       .then((res) => {
         setAddProductInstanceRequestCode(true);
@@ -267,7 +278,10 @@ const ProductDetailPage = () => {
     axios
       .post(
         "http://localhost:3000/api/productinstances/update",
-        editProductInstanceData
+        editProductInstanceData,
+        {
+          headers: { Authorization: localStorage.getItem("token") },
+        }
       )
       .then((res) => {
         if (res.data) {
@@ -319,7 +333,10 @@ const ProductDetailPage = () => {
     axios
       .post(
         "http://localhost:3000/api/productinstances/update/addquantity",
-        addQuantityProductInstanceData
+        addQuantityProductInstanceData,
+        {
+          headers: { Authorization: localStorage.getItem("token") },
+        }
       )
       .then((res) => {
         if (res.data) {
@@ -357,7 +374,10 @@ const ProductDetailPage = () => {
     axios
       .post(
         "http://localhost:3000/api/productinstances/update/subtractquantity",
-        subtractQuantityProductInstanceData
+        subtractQuantityProductInstanceData,
+        {
+          headers: { Authorization: localStorage.getItem("token") },
+        }
       )
       .then((res) => {
         if (res.data) {

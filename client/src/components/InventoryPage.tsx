@@ -15,7 +15,9 @@ const StorePage = () => {
 
   const getInventory = () => {
     axios
-      .get("http://localhost:3000/api/products")
+      .get("http://localhost:3000/api/products", {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
       .then((res) => {
         if (res.data) {
           setInventory(res.data);

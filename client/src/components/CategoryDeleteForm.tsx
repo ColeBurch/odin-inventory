@@ -53,7 +53,9 @@ const CategoryDeleteForm = () => {
     const data = { _id: category?._id };
     console.log(data);
     axios
-      .post("http://localhost:3000/api/categories/delete", data)
+      .post("http://localhost:3000/api/categories/delete", data, {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
       .then((res) => {
         setRequestCode(true);
         setRequestMessage(res.data.message);
