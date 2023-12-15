@@ -23,6 +23,11 @@ exports.user_login = asyncHandler(async (req, res, next) => {
             success: true,
             token: tokenObject.token,
             expiresIn: tokenObject.expires,
+            user: {
+              email: user.email,
+              firstName: user.firstName,
+              lastName: user.lastName,
+            },
           });
         } else {
           res.status(401).json({ errors: [{ msg: "Invalid credentials." }] });

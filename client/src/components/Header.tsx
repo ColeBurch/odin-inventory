@@ -24,10 +24,28 @@ type CategoryType = {
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categories, setCategories] = React.useState<CategoryType>([]);
+  const [userFName, setUserFName] = React.useState<string>("");
+
+  const getStatus = () => {
+    axios
+      .get("http://localhost:3000/api/status", {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
+      .then((res) => {
+        if (res.data) {
+          setUserFName(res.data.user.firstName);
+        }
+      })
+      .catch((err) => {
+        window.location.href = "/signin";
+      });
+  };
 
   const getCategories = () => {
     axios
-      .get("http://localhost:3000/api/categories")
+      .get("http://localhost:3000/api/categories", {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
       .then((res) => {
         if (res.data) {
           setCategories(res.data);
@@ -40,6 +58,7 @@ const Header = () => {
 
   React.useEffect(() => {
     getCategories();
+    getStatus();
   }, []);
 
   return (
@@ -142,7 +161,14 @@ const Header = () => {
             Company
           </a>
         </Popover.Group>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end"></div>
+        <div className="lg:flex lg:flex-1 lg:justify-end text-gray-900 text-md hidden items-center gap-3">
+          <div>{userFName}</div>
+          <img
+            className="h-8 w-8 rounded-full"
+            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+            alt=""
+          />
+        </div>
       </nav>
       <Dialog
         as="div"
@@ -230,7 +256,16 @@ const Header = () => {
                   Company
                 </a>
               </div>
-              <div className="py-6"></div>
+              <div className="py-6">
+                <div className="text-gray-900 text-md flex items-center gap-3">
+                  <img
+                    className="h-8 w-8 rounded-full"
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    alt=""
+                  />
+                  <div>{userFName}</div>
+                </div>
+              </div>
             </div>
           </div>
         </Dialog.Panel>

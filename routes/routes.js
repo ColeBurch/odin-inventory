@@ -7,12 +7,16 @@ const authentication_controller = require("../controllers/authenticationControll
 const passport = require("passport");
 
 router.get(
-  "/protect",
+  "/status",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     res.status(200).json({
       success: true,
-      msg: "You are successfully authenticated to this route!",
+      user: {
+        email: req.user.email,
+        firstName: req.user.firstName,
+        lastName: req.user.lastName,
+      },
     });
   }
 );
