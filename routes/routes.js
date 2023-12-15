@@ -3,8 +3,31 @@ const router = express.Router();
 const category_controller = require("../controllers/categoryController");
 const product_controller = require("../controllers/productController");
 const product_instance_controller = require("../controllers/productInstanceController");
+const authentication_controller = require("../controllers/authenticationController");
+const passport = require("passport");
 
-router.get("/categories", category_controller.category_list);
+router.get(
+  "/protect",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.status(200).json({
+      success: true,
+      msg: "You are successfully authenticated to this route!",
+    });
+  }
+);
+
+router.post("/login", authentication_controller.user_login);
+
+router.post("/register", authentication_controller.user_register);
+
+router.get("/auth");
+
+router.get(
+  "/categories",
+  passport.authenticate("jwt", { session: false }),
+  category_controller.category_list
+);
 
 router.get("/categories/:id", category_controller.category_detail);
 
