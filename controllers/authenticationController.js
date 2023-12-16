@@ -77,6 +77,11 @@ exports.user_register = (req, res, next) => {
               success: true,
               token: jwt.token,
               expiresIn: jwt.expires,
+              user: {
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+              },
             });
           })
           .catch((err) => {

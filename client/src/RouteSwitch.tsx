@@ -7,6 +7,7 @@ import CategoryAddPage from "./pages/CategoryAddPage";
 import CategoryDeletePage from "./pages/CategoryDeletePage";
 import CategoryDetailPage from "./pages/CategoryDetailPage";
 import SignInPage from "./pages/SignInPage";
+import RegisterPage from "./pages/RegisterPage";
 
 export const RouteSwitch = () => {
   return (
@@ -14,6 +15,7 @@ export const RouteSwitch = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<SignInPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/category/form/add" element={<CategoryAddPage />} />
