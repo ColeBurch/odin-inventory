@@ -36,9 +36,6 @@ function issueJWT(user) {
     iat: Date.now(),
   };
 
-  console.log(payload);
-  console.log("Utils.js/issueJWT");
-
   const signedToken = jsonwebtoken.sign(payload, PRIVATE_KEY, {
     expiresIn: expiresIn,
     algorithm: "RS256",

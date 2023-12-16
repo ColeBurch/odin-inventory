@@ -5,7 +5,7 @@ const { body, validationResult } = require("express-validator");
 const ProductInstance = require("../models/productInstance");
 
 exports.product_list = asyncHandler(async (req, res, next) => {
-  const products = await Product.find().exec();
+  const products = await Product.find({ user: req.user.id }).exec();
   res.json(products);
 });
 
@@ -27,6 +27,7 @@ exports.product_post = [
     const errors = validationResult(req);
 
     const product = new Product({
+      user: req.user.id,
       name: req.body.name,
       price: req.body.price,
       category: req.body.category,
@@ -36,32 +37,15 @@ exports.product_post = [
     if (!errors.isEmpty()) {
       res.status(401).json({ errors: errors.array() });
     } else {
-      const productExists = await Product.findOne({
-        name: req.body.name,
-      }).exec();
-      if (productExists) {
-        res.status(401).json({
-          errors: [
-            {
-              location: "body",
-              msg: "Product already exists.",
-              path: "name",
-              type: "field",
-              value: req.body.name,
-            },
-          ],
-        });
-      } else {
-        const newProduct = await product.save();
-        res.json(newProduct);
-      }
+      const newProduct = await product.save();
+      res.json(newProduct);
     }
   }),
 ];
 
 exports.product_delete = asyncHandler(async (req, res, next) => {
   const [allProductInstancesInProduct] = await Promise.all([
-    ProductInstance.find({ product: req.body._id }).exec(),
+    ProductInstance.find({ user: req.user.id, product: req.body._id }).exec(),
   ]);
 
   if (allProductInstancesInProduct.length > 0) {
@@ -97,6 +81,7 @@ exports.product_update = [
     const errors = validationResult(req);
 
     const newProduct = new Product({
+      user: req.user.id,
       name: req.body.name,
       price: req.body.price,
       category: req.body.category,

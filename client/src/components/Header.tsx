@@ -16,6 +16,7 @@ function classNames(...classes: Array<string | boolean | undefined>) {
 
 type CategoryType = {
   _id: string;
+  user: string;
   name: string;
   description: string;
   __v: number;
