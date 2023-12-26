@@ -4,12 +4,13 @@ const Product = require("../models/product");
 const { body, validationResult } = require("express-validator");
 
 exports.category_list = asyncHandler(async (req, res, next) => {
-  const categories = await Category.find().exec();
+  const categories = await Category.find({ user: req.user.id }).exec();
   res.json(categories);
 });
 
 exports.category_detail = asyncHandler(async (req, res, next) => {
   const categoryProducts = await Product.find({
+    user: req.user.id,
     category: req.params.id,
   }).exec();
   res.json(categoryProducts);
@@ -27,6 +28,7 @@ exports.category_post = [
     const errors = validationResult(req);
 
     const category = new Category({
+      user: req.user.id,
       name: req.body.name,
       description: req.body.description,
     });
@@ -35,6 +37,7 @@ exports.category_post = [
       res.status(401).json({ errors: errors.array() });
     } else {
       const categoryExists = await Category.findOne({
+        user: req.user.id,
         name: req.body.name,
       }).exec();
       if (categoryExists) {
@@ -59,7 +62,7 @@ exports.category_post = [
 
 exports.category_delete = asyncHandler(async (req, res, next) => {
   const [allProductsInCategory] = await Promise.all([
-    Product.find({ category: req.body._id }).exec(),
+    Product.find({ user: req.user.id, category: req.body._id }).exec(),
   ]);
 
   if (allProductsInCategory.length > 0) {
@@ -94,6 +97,7 @@ exports.category_update = [
     const errors = validationResult(req);
 
     const newCategory = new Category({
+      user: req.user.id,
       name: req.body.name,
       description: req.body.description,
       _id: req.body.id,

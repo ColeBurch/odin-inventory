@@ -69,7 +69,9 @@ const CategoryDetail = () => {
   React.useEffect(() => {
     const getInventory = () => {
       axios
-        .get("http://localhost:3000/api/categories/" + id)
+        .get("http://localhost:3000/api/categories/" + id, {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
         .then((res) => {
           if (res.data) {
             setInventory(res.data);
@@ -82,7 +84,9 @@ const CategoryDetail = () => {
 
     const getCategories = () => {
       axios
-        .get("http://localhost:3000/api/categories")
+        .get("http://localhost:3000/api/categories", {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
         .then((res) => {
           if (res.data) {
             setCategories(res.data);
@@ -123,7 +127,9 @@ const CategoryDetail = () => {
     e.preventDefault();
     const data = { name, description, id };
     axios
-      .post("http://localhost:3000/api/categories/update", data)
+      .post("http://localhost:3000/api/categories/update", data, {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
       .then((res) => {
         setEditCategoryRequestCode(true);
         setEditCategoryRequestMessage(res.data.name + " edited successfully!");
@@ -145,7 +151,9 @@ const CategoryDetail = () => {
       summary: productSummary,
     };
     axios
-      .post("http://localhost:3000/api/products", addProductFormData)
+      .post("http://localhost:3000/api/products", addProductFormData, {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
       .then((res) => {
         setAddProductRequestCode(true);
         setAddProductRequestMessage(res.data.name + " added successfully!");
@@ -167,7 +175,9 @@ const CategoryDetail = () => {
     const product = deleteProductSelected;
     const data = { _id: product?._id };
     axios
-      .post("http://localhost:3000/api/products/delete", data)
+      .post("http://localhost:3000/api/products/delete", data, {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
       .then((res) => {
         setDeleteProductRequestCode(true);
         setDeleteProductRequestMessage(res.data.message);

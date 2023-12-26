@@ -5,12 +5,15 @@ const ProductInstance = require("../models/productInstance");
 const { body, validationResult } = require("express-validator");
 
 exports.productinstance_list = asyncHandler(async (req, res, next) => {
-  const productinstances = await ProductInstance.find().exec();
+  const productinstances = await ProductInstance.find({
+    user: req.user.id,
+  }).exec();
   res.json(productinstances);
 });
 
 exports.product_instance_detail = asyncHandler(async (req, res, next) => {
   const productinstance = await ProductInstance.find({
+    user: req.user.id,
     product: req.params.id,
   }).exec();
   res.json(productinstance);
@@ -18,6 +21,7 @@ exports.product_instance_detail = asyncHandler(async (req, res, next) => {
 
 exports.product_specific_instances = asyncHandler(async (req, res, next) => {
   const productinstances = await ProductInstance.find({
+    user: req.user.id,
     product: req.params.id,
   }).exec();
   res.json(productinstances);
@@ -34,6 +38,7 @@ exports.productInstance_post = [
     const errors = validationResult(req);
 
     const productInstance = new ProductInstance({
+      user: req.user.id,
       product: req.body.product,
       quantity: req.body.quantity,
       size: req.body.size,
@@ -87,6 +92,7 @@ exports.productInstance_update = [
     const errors = validationResult(req);
 
     const newProductInstance = new ProductInstance({
+      user: req.user.id,
       product: req.body.product,
       quantity: req.body.quantity,
       size: req.body.size,
@@ -170,6 +176,7 @@ exports.productInstance_addQuantity = [
           });
         } else {
           const newProductInstance = new ProductInstance({
+            user: req.user.id,
             product: req.body.product,
             quantity: productInstanceExists.quantity + req.body.quantity,
             size: req.body.size,
@@ -234,6 +241,7 @@ exports.productInstance_subtractQuantity = [
           });
         } else {
           const newProductInstance = new ProductInstance({
+            user: req.user.id,
             product: req.body.product,
             quantity: productInstanceExists.quantity - req.body.quantity,
             size: req.body.size,

@@ -16,6 +16,7 @@ function classNames(...classes: Array<string | boolean | undefined>) {
 
 type CategoryType = {
   _id: string;
+  user: string;
   name: string;
   description: string;
   __v: number;
@@ -24,10 +25,28 @@ type CategoryType = {
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categories, setCategories] = React.useState<CategoryType>([]);
+  const [userFName, setUserFName] = React.useState<string>("");
+
+  const getStatus = () => {
+    axios
+      .get("http://localhost:3000/api/status", {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
+      .then((res) => {
+        if (res.data) {
+          setUserFName(res.data.user.firstName);
+        }
+      })
+      .catch((err) => {
+        window.location.href = "/signin";
+      });
+  };
 
   const getCategories = () => {
     axios
-      .get("http://localhost:3000/api/categories")
+      .get("http://localhost:3000/api/categories", {
+        headers: { Authorization: localStorage.getItem("token") },
+      })
       .then((res) => {
         if (res.data) {
           setCategories(res.data);
@@ -40,7 +59,13 @@ const Header = () => {
 
   React.useEffect(() => {
     getCategories();
+    getStatus();
   }, []);
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    window.location.reload();
+  };
 
   return (
     <header className="bg-white">
@@ -142,7 +167,40 @@ const Header = () => {
             Company
           </a>
         </Popover.Group>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end"></div>
+        <div className="lg:flex lg:flex-1 lg:justify-end text-gray-900 text-md hidden items-center gap-3">
+          <div>{userFName}</div>
+          <img
+            className="h-8 w-8 rounded-full"
+            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+            alt=""
+          />
+          <Popover.Group className="hidden lg:flex lg:gap-x-12">
+            <Popover className="relative">
+              <Popover.Button className="flex items-center gap-x-1 text-md font-semibold leading-6 text-gray-900">
+                <ChevronDownIcon
+                  className="h-5 w-5 flex-none text-gray-400"
+                  aria-hidden="true"
+                />
+              </Popover.Button>
+
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-200"
+                enterFrom="opacity-0 translate-y-1"
+                enterTo="opacity-100 translate-y-0"
+                leave="transition ease-in duration-150"
+                leaveFrom="opacity-100 translate-y-0"
+                leaveTo="opacity-0 translate-y-1"
+              >
+                <Popover.Panel className="absolute -left-20 top-full z-30 mt-3 w-28 max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
+                  <button className="p-4 pl-6" onClick={logout}>
+                    log out
+                  </button>
+                </Popover.Panel>
+              </Transition>
+            </Popover>
+          </Popover.Group>
+        </div>
       </nav>
       <Dialog
         as="div"
@@ -230,7 +288,42 @@ const Header = () => {
                   Company
                 </a>
               </div>
-              <div className="py-6"></div>
+              <div className="flex flex-1 lg:justify-end text-gray-900 text-md lg:hidden items-center gap-3 py-6">
+                <Popover.Group className="">
+                  <Popover className="relative">
+                    <Popover.Button className="flex items-center gap-x-1 text-md font-semibold leading-6 text-gray-900">
+                      <ChevronDownIcon
+                        className="h-5 w-5 flex-none text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </Popover.Button>
+
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-200"
+                      enterFrom="opacity-0 translate-y-1"
+                      enterTo="opacity-100 translate-y-0"
+                      leave="transition ease-in duration-150"
+                      leaveFrom="opacity-100 translate-y-0"
+                      leaveTo="opacity-0 translate-y-1"
+                    >
+                      <Popover.Panel className="absolute top-full z-30 mt-3 w-28 max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
+                        <button className="p-4 pl-6" onClick={logout}>
+                          log out
+                        </button>
+                      </Popover.Panel>
+                    </Transition>
+                  </Popover>
+                </Popover.Group>
+                <div className="text-gray-900 text-md flex items-center gap-3">
+                  <img
+                    className="h-8 w-8 rounded-full"
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    alt=""
+                  />
+                  <div>{userFName}</div>
+                </div>
+              </div>
             </div>
           </div>
         </Dialog.Panel>

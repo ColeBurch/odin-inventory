@@ -13,7 +13,6 @@ const productinstances = [];
 const categories = [];
 
 const mongoose = require("mongoose");
-const product = require("./models/product");
 mongoose.set("strictQuery", false);
 
 const mongoDB = process.env.DB;
