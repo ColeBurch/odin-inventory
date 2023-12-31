@@ -8,17 +8,21 @@ import {
   CheckIcon,
   ChevronUpDownIcon,
 } from "@heroicons/react/24/outline";
+import storage from "../firebase";
+import { deleteObject, ref } from "firebase/storage";
 
 type CategoryType = {
   _id: string;
   name: string;
   description: string;
+  image: string;
+  imageRef: string;
   __v: number;
 }[];
 
 const CategoryDeleteForm = () => {
   const [categories, setCategories] = React.useState<CategoryType>([
-    { _id: "", name: "", description: "", __v: 0 },
+    { _id: "", name: "", description: "", image: "", imageRef: "", __v: 0 },
   ]);
 
   function classNames(...classes: any) {
@@ -52,22 +56,46 @@ const CategoryDeleteForm = () => {
 
   const handleSubmit = (event: any) => {
     const category = selected;
-    const data = { _id: category?._id };
-    console.log(data);
-    axios
-      .post("http://localhost:3000/api/categories/delete", data, {
-        headers: { Authorization: localStorage.getItem("token") },
-      })
-      .then((res) => {
-        setRequestCode(true);
-        setRequestMessage(res.data.message);
-        setRequestStatusBox(true);
-      })
-      .catch((err) => {
-        setRequestCode(false);
-        setRequestMessage(err.response.data.errors[0].msg);
-        setRequestStatusBox(true);
-      });
+    const data = { _id: category?._id, image: category?.image };
+    if (data.image !== "") {
+      const imageRef = ref(storage, category?.imageRef);
+      deleteObject(imageRef)
+        .then(() => {})
+        .catch((error) => {
+          setRequestCode(false);
+          setRequestMessage("An Error Occurred While Deleting the Image");
+          setRequestStatusBox(true);
+        });
+      axios
+        .post("http://localhost:3000/api/categories/delete", data, {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
+        .then((res) => {
+          setRequestCode(true);
+          setRequestMessage(res.data.message);
+          setRequestStatusBox(true);
+        })
+        .catch((err) => {
+          setRequestCode(false);
+          setRequestMessage(err.response.data.errors[0].msg);
+          setRequestStatusBox(true);
+        });
+    } else {
+      axios
+        .post("http://localhost:3000/api/categories/delete", data, {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
+        .then((res) => {
+          setRequestCode(true);
+          setRequestMessage(res.data.message);
+          setRequestStatusBox(true);
+        })
+        .catch((err) => {
+          setRequestCode(false);
+          setRequestMessage(err.response.data.errors[0].msg);
+          setRequestStatusBox(true);
+        });
+    }
     event.preventDefault();
   };
 

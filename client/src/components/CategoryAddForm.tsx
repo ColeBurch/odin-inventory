@@ -6,6 +6,8 @@ import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
+import storage from "../firebase.js";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const CategoryAddForm = () => {
   const [name, setName] = React.useState<string>("");
@@ -16,21 +18,74 @@ const CategoryAddForm = () => {
   const [requestMessage, setRequestMessage] = React.useState<string>("");
 
   const handleSubmit = (event: any) => {
-    const data = { name, description };
-    axios
-      .post("http://localhost:3000/api/categories", data, {
-        headers: { Authorization: localStorage.getItem("token") },
-      })
-      .then((res) => {
-        setRequestCode(true);
-        setRequestMessage(res.data.name + " added successfully!");
-        setRequestStatusBox(true);
-      })
-      .catch((err) => {
-        setRequestCode(false);
-        setRequestMessage(err.response.data.errors[0].msg);
-        setRequestStatusBox(true);
-      });
+    console.log(event.target);
+
+    const imageFile = event.target.image.files[0];
+
+    if (!imageFile) {
+      const data = {
+        name,
+        description,
+        image: "",
+        imageRef: "",
+      };
+      console.log(data);
+      axios
+        .post("http://localhost:3000/api/categories", data, {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
+        .then((res) => {
+          setRequestCode(true);
+          setRequestMessage(res.data.name + " added successfully!");
+          setRequestStatusBox(true);
+        })
+        .catch((err) => {
+          setRequestCode(false);
+          setRequestMessage(err.response.data.errors[0].msg);
+          setRequestStatusBox(true);
+        });
+    } else {
+      const storageRef = ref(storage, imageFile.name);
+
+      const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+        },
+        (error) => {
+          console.log(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            const data = {
+              name,
+              description,
+              image: downloadURL,
+              imageRef: uploadTask.snapshot.ref.fullPath,
+            };
+            console.log(data);
+            axios
+              .post("http://localhost:3000/api/categories", data, {
+                headers: { Authorization: localStorage.getItem("token") },
+              })
+              .then((res) => {
+                setRequestCode(true);
+                setRequestMessage(res.data.name + " added successfully!");
+                setRequestStatusBox(true);
+              })
+              .catch((err) => {
+                setRequestCode(false);
+                setRequestMessage(err.response.data.errors[0].msg);
+                setRequestStatusBox(true);
+              });
+          });
+        }
+      );
+    }
     event.preventDefault();
   };
 
@@ -72,6 +127,17 @@ const CategoryAddForm = () => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+        />
+        <label
+          htmlFor="image"
+          className="block text-gray-700 text-xl font-bold mb-2"
+        >
+          Image:{" "}
+        </label>
+        <input
+          type="file"
+          name="image"
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
         />
         <button

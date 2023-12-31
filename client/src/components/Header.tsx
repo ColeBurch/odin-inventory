@@ -19,6 +19,7 @@ type CategoryType = {
   user: string;
   name: string;
   description: string;
+  image: string;
   __v: number;
 }[];
 
@@ -49,6 +50,7 @@ const Header = () => {
       })
       .then((res) => {
         if (res.data) {
+          console.log(res.data);
           setCategories(res.data);
         }
       })
@@ -116,7 +118,11 @@ const Header = () => {
                       className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
                     >
                       <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                        <img className="h-8 w-auto" alt="img" />
+                        <img
+                          className="h-8 w-auto"
+                          alt="img"
+                          src={item.image}
+                        />
                       </div>
                       <div className="flex-auto">
                         <a
