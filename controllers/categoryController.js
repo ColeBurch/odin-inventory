@@ -102,6 +102,8 @@ exports.category_update = [
       user: req.user.id,
       name: req.body.name,
       description: req.body.description,
+      image: req.body.image,
+      imageRef: req.body.imageRef,
       _id: req.body.id,
     });
 

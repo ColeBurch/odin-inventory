@@ -7,6 +7,8 @@ type InventoryType = {
   price: number;
   category: string;
   summary: string;
+  image: string;
+  imageRef: string;
   __v: number;
 }[];
 
@@ -44,6 +46,7 @@ const StorePage = () => {
             <div key={product._id} className="relative">
               <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
                 <img
+                  src={product.image}
                   alt={"Placeholder"}
                   className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                 />
