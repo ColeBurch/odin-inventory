@@ -32,6 +32,8 @@ exports.product_post = [
       price: req.body.price,
       category: req.body.category,
       summary: req.body.summary,
+      image: req.body.image,
+      imageRef: req.body.imageRef,
     });
 
     if (!errors.isEmpty()) {

@@ -18,8 +18,6 @@ const CategoryAddForm = () => {
   const [requestMessage, setRequestMessage] = React.useState<string>("");
 
   const handleSubmit = (event: any) => {
-    console.log(event.target);
-
     const imageFile = event.target.image.files[0];
 
     if (!imageFile) {
@@ -29,7 +27,6 @@ const CategoryAddForm = () => {
         image: "",
         imageRef: "",
       };
-      console.log(data);
       axios
         .post("http://localhost:3000/api/categories", data, {
           headers: { Authorization: localStorage.getItem("token") },
@@ -67,7 +64,6 @@ const CategoryAddForm = () => {
               image: downloadURL,
               imageRef: uploadTask.snapshot.ref.fullPath,
             };
-            console.log(data);
             axios
               .post("http://localhost:3000/api/categories", data, {
                 headers: { Authorization: localStorage.getItem("token") },
