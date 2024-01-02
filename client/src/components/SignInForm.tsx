@@ -16,11 +16,36 @@ const SignInForm = () => {
   const [requestCode, setRequestCode] = React.useState<boolean>(false);
   const [requestMessage, setRequestMessage] = React.useState<string>("");
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = (event?: any) => {
     event.preventDefault();
     const data = { email, password };
     axios
-      .post("http://localhost:3000/api/login", data)
+      .post("https://odin-inventory.adaptable.app/api/login", data)
+      .then((res) => {
+        console.log(res);
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("userEmail", JSON.stringify(res.data.user.email));
+        localStorage.setItem(
+          "userFName",
+          JSON.stringify(res.data.user.firstName)
+        );
+        localStorage.setItem(
+          "userLName",
+          JSON.stringify(res.data.user.lastName)
+        );
+        window.location.href = "/";
+      })
+      .catch((err) => {
+        setRequestCode(false);
+        setRequestMessage(err.response.data.errors[0].msg);
+        setRequestStatusBox(true);
+      });
+  };
+
+  const demoUser = () => {
+    const data = { email: "DemoUser@Demo.com", password: "DemoUserPassword" };
+    axios
+      .post("https://odin-inventory.adaptable.app/api/login", data)
       .then((res) => {
         console.log(res);
         localStorage.setItem("token", res.data.token);
@@ -135,15 +160,15 @@ const SignInForm = () => {
             </a>
           </p>
 
-          <p className="mt-10 text-center text-sm text-gray-500">
+          <button
+            onClick={demoUser}
+            className="mt-10 text-center text-sm text-gray-500"
+          >
             Interested only in a demo?{" "}
-            <a
-              href="/"
-              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-            >
-              Use in demo mode
-            </a>
-          </p>
+            <p className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+              Click Here to use in demo mode
+            </p>
+          </button>
         </div>
       </div>
       <Transition.Root show={requestStatusBox} as={Fragment}>
@@ -207,6 +232,7 @@ const SignInForm = () => {
                   </div>
                   <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                     <button
+                      id="SubmitButton"
                       type="button"
                       className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
                       onClick={() => onClosePageReload()}

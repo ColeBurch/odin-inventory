@@ -28,7 +28,7 @@ const CategoryAddForm = () => {
         imageRef: "",
       };
       axios
-        .post("http://localhost:3000/api/categories", data, {
+        .post("https://odin-inventory.adaptable.app/api/categories", data, {
           headers: { Authorization: localStorage.getItem("token") },
         })
         .then((res) => {
@@ -65,9 +65,13 @@ const CategoryAddForm = () => {
               imageRef: uploadTask.snapshot.ref.fullPath,
             };
             axios
-              .post("http://localhost:3000/api/categories", data, {
-                headers: { Authorization: localStorage.getItem("token") },
-              })
+              .post(
+                "https://odin-inventory.adaptable.app/api/categories",
+                data,
+                {
+                  headers: { Authorization: localStorage.getItem("token") },
+                }
+              )
               .then((res) => {
                 setRequestCode(true);
                 setRequestMessage(res.data.name + " added successfully!");

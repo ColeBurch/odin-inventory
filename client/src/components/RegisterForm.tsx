@@ -22,7 +22,7 @@ const RegisterForm = () => {
     event.preventDefault();
     const data = { email, firstName, lastName, password };
     axios
-      .post("http://localhost:3000/api/register", data)
+      .post("https://odin-inventory.adaptable.app/api/register", data)
       .then((res) => {
         console.log(res);
         localStorage.setItem("token", res.data.token);

@@ -30,7 +30,7 @@ const Header = () => {
 
   const getStatus = () => {
     axios
-      .get("http://localhost:3000/api/status", {
+      .get("https://odin-inventory.adaptable.app/api/status", {
         headers: { Authorization: localStorage.getItem("token") },
       })
       .then((res) => {
@@ -45,7 +45,7 @@ const Header = () => {
 
   const getCategories = () => {
     axios
-      .get("http://localhost:3000/api/categories", {
+      .get("https://odin-inventory.adaptable.app/api/categories", {
         headers: { Authorization: localStorage.getItem("token") },
       })
       .then((res) => {

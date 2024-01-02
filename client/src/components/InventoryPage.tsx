@@ -17,7 +17,7 @@ const StorePage = () => {
 
   const getInventory = () => {
     axios
-      .get("http://localhost:3000/api/products", {
+      .get("https://odin-inventory.adaptable.app/api/products", {
         headers: { Authorization: localStorage.getItem("token") },
       })
       .then((res) => {

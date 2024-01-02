@@ -126,7 +126,7 @@ const ProductDetailPage = () => {
   React.useEffect(() => {
     const getProductDetails = () => {
       axios
-        .get("http://localhost:3000/api/products/" + id, {
+        .get("https://odin-inventory.adaptable.app/api/products/" + id, {
           headers: { Authorization: localStorage.getItem("token") },
         })
         .then((res) => {
@@ -144,9 +144,12 @@ const ProductDetailPage = () => {
 
     const getProductInstances = () => {
       axios
-        .get("http://localhost:3000/api/productinstances/" + id, {
-          headers: { Authorization: localStorage.getItem("token") },
-        })
+        .get(
+          "https://odin-inventory.adaptable.app/api/productinstances/" + id,
+          {
+            headers: { Authorization: localStorage.getItem("token") },
+          }
+        )
         .then((res) => {
           if (res.data) {
             const sortedInstances = res.data.sort((a: any, b: any) => {
@@ -175,9 +178,13 @@ const ProductDetailPage = () => {
     console.log(deleteProductInstanceID);
     const data = { _id: deleteProductInstanceID };
     axios
-      .post("http://localhost:3000/api/productinstances/delete", data, {
-        headers: { Authorization: localStorage.getItem("token") },
-      })
+      .post(
+        "https://odin-inventory.adaptable.app/api/productinstances/delete",
+        data,
+        {
+          headers: { Authorization: localStorage.getItem("token") },
+        }
+      )
       .then((res) => {
         if (res.data) {
           setDeleteProductInstanceRequestCode(true);
@@ -207,9 +214,13 @@ const ProductDetailPage = () => {
       summary: productSummary,
     };
     axios
-      .post("http://localhost:3000/api/products/update", productEditData, {
-        headers: { Authorization: localStorage.getItem("token") },
-      })
+      .post(
+        "https://odin-inventory.adaptable.app/api/products/update",
+        productEditData,
+        {
+          headers: { Authorization: localStorage.getItem("token") },
+        }
+      )
       .then((res) => {
         if (res.data) {
           setEditProductRequestCode(true);
@@ -241,7 +252,7 @@ const ProductDetailPage = () => {
     };
     axios
       .post(
-        "http://localhost:3000/api/productinstances",
+        "https://odin-inventory.adaptable.app/api/productinstances",
         productInstanceAddData,
         {
           headers: { Authorization: localStorage.getItem("token") },
@@ -277,7 +288,7 @@ const ProductDetailPage = () => {
     };
     axios
       .post(
-        "http://localhost:3000/api/productinstances/update",
+        "https://odin-inventory.adaptable.app/api/productinstances/update",
         editProductInstanceData,
         {
           headers: { Authorization: localStorage.getItem("token") },
@@ -332,7 +343,7 @@ const ProductDetailPage = () => {
     };
     axios
       .post(
-        "http://localhost:3000/api/productinstances/update/addquantity",
+        "https://odin-inventory.adaptable.app/api/productinstances/update/addquantity",
         addQuantityProductInstanceData,
         {
           headers: { Authorization: localStorage.getItem("token") },
@@ -373,7 +384,7 @@ const ProductDetailPage = () => {
     };
     axios
       .post(
-        "http://localhost:3000/api/productinstances/update/subtractquantity",
+        "https://odin-inventory.adaptable.app/api/productinstances/update/subtractquantity",
         subtractQuantityProductInstanceData,
         {
           headers: { Authorization: localStorage.getItem("token") },

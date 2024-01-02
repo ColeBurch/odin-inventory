@@ -82,7 +82,7 @@ const CategoryDetail = () => {
   React.useEffect(() => {
     const getInventory = () => {
       axios
-        .get("http://localhost:3000/api/categories/" + id, {
+        .get("https://odin-inventory.adaptable.app/api/categories/" + id, {
           headers: { Authorization: localStorage.getItem("token") },
         })
         .then((res) => {
@@ -97,7 +97,7 @@ const CategoryDetail = () => {
 
     const getCategories = () => {
       axios
-        .get("http://localhost:3000/api/categories", {
+        .get("https://odin-inventory.adaptable.app/api/categories", {
           headers: { Authorization: localStorage.getItem("token") },
         })
         .then((res) => {
@@ -149,9 +149,13 @@ const CategoryDetail = () => {
     if (!categoryImageEdit) {
       const data = { name, description, image, imageRef, id };
       axios
-        .post("http://localhost:3000/api/categories/update", data, {
-          headers: { Authorization: localStorage.getItem("token") },
-        })
+        .post(
+          "https://odin-inventory.adaptable.app/api/categories/update",
+          data,
+          {
+            headers: { Authorization: localStorage.getItem("token") },
+          }
+        )
         .then((res) => {
           setEditCategoryRequestCode(true);
           setEditCategoryRequestMessage(
@@ -195,9 +199,13 @@ const CategoryDetail = () => {
                   id: id,
                 };
                 axios
-                  .post("http://localhost:3000/api/categories/update", data, {
-                    headers: { Authorization: localStorage.getItem("token") },
-                  })
+                  .post(
+                    "https://odin-inventory.adaptable.app/api/categories/update",
+                    data,
+                    {
+                      headers: { Authorization: localStorage.getItem("token") },
+                    }
+                  )
                   .then((res) => {
                     setEditCategoryRequestCode(true);
                     setEditCategoryRequestMessage(
@@ -241,9 +249,13 @@ const CategoryDetail = () => {
         imageRef: "",
       };
       axios
-        .post("http://localhost:3000/api/products", addProductFormData, {
-          headers: { Authorization: localStorage.getItem("token") },
-        })
+        .post(
+          "https://odin-inventory.adaptable.app/api/products",
+          addProductFormData,
+          {
+            headers: { Authorization: localStorage.getItem("token") },
+          }
+        )
         .then((res) => {
           setAddProductRequestCode(true);
           setAddProductRequestMessage(res.data.name + " added successfully!");
@@ -279,9 +291,13 @@ const CategoryDetail = () => {
               imageRef: uploadTask.snapshot.ref.fullPath,
             };
             axios
-              .post("http://localhost:3000/api/products", addProductFormData, {
-                headers: { Authorization: localStorage.getItem("token") },
-              })
+              .post(
+                "https://odin-inventory.adaptable.app/api/products",
+                addProductFormData,
+                {
+                  headers: { Authorization: localStorage.getItem("token") },
+                }
+              )
               .then((res) => {
                 setAddProductRequestCode(true);
                 setAddProductRequestMessage(
@@ -320,9 +336,13 @@ const CategoryDetail = () => {
           setDeleteProductRequestStatusBox(true);
         });
       axios
-        .post("http://localhost:3000/api/products/delete", data, {
-          headers: { Authorization: localStorage.getItem("token") },
-        })
+        .post(
+          "https://odin-inventory.adaptable.app/api/products/delete",
+          data,
+          {
+            headers: { Authorization: localStorage.getItem("token") },
+          }
+        )
         .then((res) => {
           setDeleteProductRequestCode(true);
           setDeleteProductRequestMessage(res.data.message);
@@ -335,9 +355,13 @@ const CategoryDetail = () => {
         });
     } else {
       axios
-        .post("http://localhost:3000/api/products/delete", data, {
-          headers: { Authorization: localStorage.getItem("token") },
-        })
+        .post(
+          "https://odin-inventory.adaptable.app/api/products/delete",
+          data,
+          {
+            headers: { Authorization: localStorage.getItem("token") },
+          }
+        )
         .then((res) => {
           setDeleteProductRequestCode(true);
           setDeleteProductRequestMessage(res.data.message);

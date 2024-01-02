@@ -31,7 +31,7 @@ const CategoryDeleteForm = () => {
 
   const getCategories = () => {
     axios
-      .get("http://localhost:3000/api/categories", {
+      .get("https://odin-inventory.adaptable.app/api/categories", {
         headers: { Authorization: localStorage.getItem("token") },
       })
       .then((res) => {
@@ -67,9 +67,13 @@ const CategoryDeleteForm = () => {
           setRequestStatusBox(true);
         });
       axios
-        .post("http://localhost:3000/api/categories/delete", data, {
-          headers: { Authorization: localStorage.getItem("token") },
-        })
+        .post(
+          "https://odin-inventory.adaptable.app/api/categories/delete",
+          data,
+          {
+            headers: { Authorization: localStorage.getItem("token") },
+          }
+        )
         .then((res) => {
           setRequestCode(true);
           setRequestMessage(res.data.message);
@@ -82,9 +86,13 @@ const CategoryDeleteForm = () => {
         });
     } else {
       axios
-        .post("http://localhost:3000/api/categories/delete", data, {
-          headers: { Authorization: localStorage.getItem("token") },
-        })
+        .post(
+          "https://odin-inventory.adaptable.app/api/categories/delete",
+          data,
+          {
+            headers: { Authorization: localStorage.getItem("token") },
+          }
+        )
         .then((res) => {
           setRequestCode(true);
           setRequestMessage(res.data.message);
