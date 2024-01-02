@@ -324,7 +324,7 @@ const Header = () => {
                 <div className="text-gray-900 text-md flex items-center gap-3">
                   <img
                     className="h-8 w-8 rounded-full"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    src="https://firebasestorage.googleapis.com/v0/b/odin-inventory-a3085.appspot.com/o/DefaultUser.png?alt=media&token=9d4ae83c-2194-489f-a821-c1c7197b46b2"
                     alt=""
                   />
                   <div>{userFName}</div>
