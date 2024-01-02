@@ -25,32 +25,14 @@ const FrontPage = () => {
                     <div className="grid flex-shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
                       <div className="h-64 w-44 overflow-hidden rounded-lg sm:opacity-0 lg:opacity-100">
                         <img
+                          src="https://firebasestorage.googleapis.com/v0/b/odin-inventory-a3085.appspot.com/o/hatImage-min.jpg?alt=media&token=d7bd0796-c3f7-42c9-ab04-67b7060cc72c"
                           alt=""
                           className="h-full w-full object-cover object-center"
                         />
                       </div>
                       <div className="h-64 w-44 overflow-hidden rounded-lg">
                         <img
-                          alt=""
-                          className="h-full w-full object-cover object-center"
-                        />
-                      </div>
-                    </div>
-                    <div className="grid flex-shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
-                      <div className="h-64 w-44 overflow-hidden rounded-lg">
-                        <img
-                          alt=""
-                          className="h-full w-full object-cover object-center"
-                        />
-                      </div>
-                      <div className="h-64 w-44 overflow-hidden rounded-lg">
-                        <img
-                          alt=""
-                          className="h-full w-full object-cover object-center"
-                        />
-                      </div>
-                      <div className="h-64 w-44 overflow-hidden rounded-lg">
-                        <img
+                          src="https://firebasestorage.googleapis.com/v0/b/odin-inventory-a3085.appspot.com/o/pantsImage-min.jpg?alt=media&token=1724e4f5-9e61-4226-8391-ae3f8bb7f1c3"
                           alt=""
                           className="h-full w-full object-cover object-center"
                         />
@@ -59,12 +41,37 @@ const FrontPage = () => {
                     <div className="grid flex-shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
                       <div className="h-64 w-44 overflow-hidden rounded-lg">
                         <img
+                          src="https://firebasestorage.googleapis.com/v0/b/odin-inventory-a3085.appspot.com/o/Jacket-Image.jpg?alt=media&token=e3b020dc-ede1-428d-8872-def1de5654e4"
                           alt=""
                           className="h-full w-full object-cover object-center"
                         />
                       </div>
                       <div className="h-64 w-44 overflow-hidden rounded-lg">
                         <img
+                          src="https://firebasestorage.googleapis.com/v0/b/odin-inventory-a3085.appspot.com/o/shoeImage-min.jpg?alt=media&token=e4dfe1f0-7810-460f-8f30-1bd4a3667616"
+                          alt=""
+                          className="h-full w-full object-cover object-center"
+                        />
+                      </div>
+                      <div className="h-64 w-44 overflow-hidden rounded-lg">
+                        <img
+                          src="https://firebasestorage.googleapis.com/v0/b/odin-inventory-a3085.appspot.com/o/shirtImage-min.jpg?alt=media&token=bdfad1e9-b3a9-46db-89a9-08a709b74dbe"
+                          alt=""
+                          className="h-full w-full object-cover object-center"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid flex-shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
+                      <div className="h-64 w-44 overflow-hidden rounded-lg">
+                        <img
+                          src="https://firebasestorage.googleapis.com/v0/b/odin-inventory-a3085.appspot.com/o/watchImage-min.jpg?alt=media&token=aff1551d-c82d-4fbe-8ec2-a38f1e99b403"
+                          alt=""
+                          className="h-full w-full object-cover object-center"
+                        />
+                      </div>
+                      <div className="h-64 w-44 overflow-hidden rounded-lg">
+                        <img
+                          src="https://firebasestorage.googleapis.com/v0/b/odin-inventory-a3085.appspot.com/o/Jean-Jacket-Image.jpg?alt=media&token=df472a59-5518-4f04-b9b1-ea8a6c47fb0e"
                           alt=""
                           className="h-full w-full object-cover object-center"
                         />

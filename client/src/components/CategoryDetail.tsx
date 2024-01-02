@@ -11,6 +11,13 @@ import {
   CheckIcon,
   ChevronUpDownIcon,
 } from "@heroicons/react/24/outline";
+import storage from "../firebase.js";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 
 type InventoryType = {
   _id: string;
@@ -18,6 +25,8 @@ type InventoryType = {
   price: number;
   category: string;
   summary: string;
+  image: string;
+  imageRef: string;
   __v: number;
 }[];
 
@@ -25,6 +34,8 @@ type CategoryType = {
   _id: string;
   name: string;
   description: string;
+  image: string;
+  imageRef: string;
   __v: number;
 }[];
 
@@ -35,6 +46,8 @@ const CategoryDetail = () => {
   //edit cateogry form states
   const [name, setName] = React.useState<string>("");
   const [description, setDescription] = React.useState<string>("");
+  const [image, setImage] = React.useState<string>("");
+  const [imageRef, setImageRef] = React.useState<string>("");
   const [editCategoryForm, setEditCategoryForm] =
     React.useState<boolean>(false);
   const [editCategoryRequestStatusBox, setEditCategoryRequestStatusBox] =
@@ -97,6 +110,13 @@ const CategoryDetail = () => {
               res.data.filter((category: any) => category._id === id)[0]
                 ?.description
             );
+            setImage(
+              res.data.filter((category: any) => category._id === id)[0]?.image
+            );
+            setImageRef(
+              res.data.filter((category: any) => category._id === id)[0]
+                ?.imageRef
+            );
           }
         })
         .catch((err) => {
@@ -123,47 +143,161 @@ const CategoryDetail = () => {
     window.location.reload();
   };
 
-  const handleCategoryEdit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const data = { name, description, id };
-    axios
-      .post("http://localhost:3000/api/categories/update", data, {
-        headers: { Authorization: localStorage.getItem("token") },
-      })
-      .then((res) => {
-        setEditCategoryRequestCode(true);
-        setEditCategoryRequestMessage(res.data.name + " edited successfully!");
-        setEditCategoryRequestStatusBox(true);
-      })
-      .catch((err) => {
-        setEditCategoryRequestCode(false);
-        setEditCategoryRequestMessage(err.response.data.errors[0].msg);
-        setEditCategoryRequestStatusBox(true);
-      });
+  const handleCategoryEdit = (event: any) => {
+    event.preventDefault();
+    const categoryImageEdit = event.target.categoryImage.files[0];
+    if (!categoryImageEdit) {
+      const data = { name, description, image, imageRef, id };
+      axios
+        .post("http://localhost:3000/api/categories/update", data, {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
+        .then((res) => {
+          setEditCategoryRequestCode(true);
+          setEditCategoryRequestMessage(
+            res.data.name + " edited successfully!"
+          );
+          setEditCategoryRequestStatusBox(true);
+        })
+        .catch((err) => {
+          setEditCategoryRequestCode(false);
+          setEditCategoryRequestMessage(err.response.data.errors[0].msg);
+          setEditCategoryRequestStatusBox(true);
+        });
+    } else {
+      const categoryImageOriginal = ref(storage, imageRef);
+      deleteObject(categoryImageOriginal)
+        .then(() => {
+          const storageRef = ref(storage, categoryImageEdit.name);
+
+          const uploadTask = uploadBytesResumable(
+            storageRef,
+            categoryImageEdit
+          );
+
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log("Upload is " + progress + "% done");
+            },
+            (error) => {
+              console.log(error);
+            },
+            () => {
+              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                const data = {
+                  name,
+                  description,
+                  image: downloadURL,
+                  imageRef: uploadTask.snapshot.ref.fullPath,
+                  id: id,
+                };
+                axios
+                  .post("http://localhost:3000/api/categories/update", data, {
+                    headers: { Authorization: localStorage.getItem("token") },
+                  })
+                  .then((res) => {
+                    setEditCategoryRequestCode(true);
+                    setEditCategoryRequestMessage(
+                      res.data.name + " added successfully!"
+                    );
+                    setEditCategoryRequestStatusBox(true);
+                  })
+                  .catch((err) => {
+                    setEditCategoryRequestCode(false);
+                    setEditCategoryRequestMessage(
+                      err.response.data.errors[0].msg
+                    );
+                    setEditCategoryRequestStatusBox(true);
+                  });
+              });
+            }
+          );
+        })
+        .catch((error) => {
+          setEditCategoryRequestCode(false);
+          setEditCategoryRequestMessage(
+            "An Error Occurred While Deleting the Image"
+          );
+          setEditCategoryRequestStatusBox(true);
+        });
+    }
   };
 
-  const handleAddProduct = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const addProductFormData = {
-      name: productName,
-      price: productPrice,
-      category: id,
-      summary: productSummary,
-    };
-    axios
-      .post("http://localhost:3000/api/products", addProductFormData, {
-        headers: { Authorization: localStorage.getItem("token") },
-      })
-      .then((res) => {
-        setAddProductRequestCode(true);
-        setAddProductRequestMessage(res.data.name + " added successfully!");
-        setAddProductRequestStatusBox(true);
-      })
-      .catch((err) => {
-        setAddProductRequestCode(false);
-        setAddProductRequestMessage(err.response.data.errors[0].msg);
-        setAddProductRequestStatusBox(true);
-      });
+  const handleAddProduct = (event: any) => {
+    event.preventDefault();
+
+    const productImageFile = event.target.productImage.files[0];
+
+    if (!productImageFile) {
+      const addProductFormData = {
+        name: productName,
+        price: productPrice,
+        category: id,
+        summary: productSummary,
+        image: "",
+        imageRef: "",
+      };
+      axios
+        .post("http://localhost:3000/api/products", addProductFormData, {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
+        .then((res) => {
+          setAddProductRequestCode(true);
+          setAddProductRequestMessage(res.data.name + " added successfully!");
+          setAddProductRequestStatusBox(true);
+        })
+        .catch((err) => {
+          setAddProductRequestCode(false);
+          setAddProductRequestMessage(err.response.data.errors[0].msg);
+          setAddProductRequestStatusBox(true);
+        });
+    } else {
+      const storageRef = ref(storage, productImageFile.name);
+      const uploadTask = uploadBytesResumable(storageRef, productImageFile);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+        },
+        (error) => {
+          console.log(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            const addProductFormData = {
+              name: productName,
+              price: productPrice,
+              category: id,
+              summary: productSummary,
+              image: downloadURL,
+              imageRef: uploadTask.snapshot.ref.fullPath,
+            };
+            axios
+              .post("http://localhost:3000/api/products", addProductFormData, {
+                headers: { Authorization: localStorage.getItem("token") },
+              })
+              .then((res) => {
+                setAddProductRequestCode(true);
+                setAddProductRequestMessage(
+                  res.data.name + " added successfully!"
+                );
+                setAddProductRequestStatusBox(true);
+              })
+              .catch((err) => {
+                setAddProductRequestCode(false);
+                setAddProductRequestMessage(err.response.data.errors[0].msg);
+                setAddProductRequestStatusBox(true);
+              });
+          });
+        }
+      );
+    }
   };
 
   function classNames(...classes: any) {
@@ -173,21 +307,48 @@ const CategoryDetail = () => {
   const handleDeleteProduct = (event: any) => {
     event.preventDefault();
     const product = deleteProductSelected;
-    const data = { _id: product?._id };
-    axios
-      .post("http://localhost:3000/api/products/delete", data, {
-        headers: { Authorization: localStorage.getItem("token") },
-      })
-      .then((res) => {
-        setDeleteProductRequestCode(true);
-        setDeleteProductRequestMessage(res.data.message);
-        setDeleteProductRequestStatusBox(true);
-      })
-      .catch((err) => {
-        setDeleteProductRequestCode(false);
-        setDeleteProductRequestMessage(err.response.data.errors[0].msg);
-        setDeleteProductRequestStatusBox(true);
-      });
+    const data = { _id: product?._id, imageRef: product?.imageRef };
+    if (data.imageRef !== "") {
+      const productImageRef = ref(storage, product?.imageRef);
+      deleteObject(productImageRef)
+        .then(() => {})
+        .catch((error) => {
+          setDeleteProductRequestCode(false);
+          setDeleteProductRequestMessage(
+            "An Error Occurred While Deleting the Image"
+          );
+          setDeleteProductRequestStatusBox(true);
+        });
+      axios
+        .post("http://localhost:3000/api/products/delete", data, {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
+        .then((res) => {
+          setDeleteProductRequestCode(true);
+          setDeleteProductRequestMessage(res.data.message);
+          setDeleteProductRequestStatusBox(true);
+        })
+        .catch((err) => {
+          setDeleteProductRequestCode(false);
+          setDeleteProductRequestMessage(err.response.data.errors[0].msg);
+          setDeleteProductRequestStatusBox(true);
+        });
+    } else {
+      axios
+        .post("http://localhost:3000/api/products/delete", data, {
+          headers: { Authorization: localStorage.getItem("token") },
+        })
+        .then((res) => {
+          setDeleteProductRequestCode(true);
+          setDeleteProductRequestMessage(res.data.message);
+          setDeleteProductRequestStatusBox(true);
+        })
+        .catch((err) => {
+          setDeleteProductRequestCode(false);
+          setDeleteProductRequestMessage(err.response.data.errors[0].msg);
+          setDeleteProductRequestStatusBox(true);
+        });
+    }
   };
 
   return (
@@ -226,6 +387,7 @@ const CategoryDetail = () => {
             <div key={product._id} className="relative">
               <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
                 <img
+                  src={product.image}
                   alt={"Placeholder"}
                   className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                 />
@@ -323,6 +485,17 @@ const CategoryDetail = () => {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       required
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+                    />
+                    <label
+                      htmlFor="categoryImage"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      Image:{" "}
+                    </label>
+                    <input
+                      type="file"
+                      name="categoryImage"
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
                     />
                     <button
@@ -491,6 +664,17 @@ const CategoryDetail = () => {
                       value={productSummary}
                       onChange={(e) => setProductSummary(e.target.value)}
                       required
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
+                    />
+                    <label
+                      htmlFor="productImage"
+                      className="block text-gray-700 text-xl font-bold mb-2"
+                    >
+                      Image:
+                    </label>
+                    <input
+                      type="file"
+                      name="productImage"
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4 mb-4 text-center"
                     />
                     <button

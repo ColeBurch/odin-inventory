@@ -19,6 +19,7 @@ type CategoryType = {
   user: string;
   name: string;
   description: string;
+  image: string;
   __v: number;
 }[];
 
@@ -49,6 +50,7 @@ const Header = () => {
       })
       .then((res) => {
         if (res.data) {
+          console.log(res.data);
           setCategories(res.data);
         }
       })
@@ -116,7 +118,11 @@ const Header = () => {
                       className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
                     >
                       <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                        <img className="h-8 w-auto" alt="img" />
+                        <img
+                          className="h-8 w-auto"
+                          alt="img"
+                          src={item.image}
+                        />
                       </div>
                       <div className="flex-auto">
                         <a
@@ -171,7 +177,7 @@ const Header = () => {
           <div>{userFName}</div>
           <img
             className="h-8 w-8 rounded-full"
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+            src="https://firebasestorage.googleapis.com/v0/b/odin-inventory-a3085.appspot.com/o/DefaultUser.png?alt=media&token=9d4ae83c-2194-489f-a821-c1c7197b46b2"
             alt=""
           />
           <Popover.Group className="hidden lg:flex lg:gap-x-12">
